@@ -1,8 +1,13 @@
 using ConfPlan.Client.Components;
+using ConfPlan.Client.States;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Ajout des services
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<UserState>();
+
+
 builder.Services.AddRazorComponents()
   .AddInteractiveServerComponents();
 

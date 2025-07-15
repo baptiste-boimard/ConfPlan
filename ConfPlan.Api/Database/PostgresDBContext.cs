@@ -18,6 +18,16 @@ public class PostgresDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         
+        var visiteurId = Guid.NewGuid();
+        var adminId = Guid.NewGuid();
+        var sponsorId = Guid.NewGuid();
+
+        modelBuilder.Entity<Role>().HasData(
+            new Role { Id = visiteurId, RoleName = "Visiteur" },
+            new Role { Id = adminId, RoleName = "Admin" },
+            new Role { Id = sponsorId, RoleName = "Sponsor" }
+        );
+        
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(a => a.Id);
@@ -25,8 +35,8 @@ public class PostgresDbContext : DbContext
             entity.Property(a => a.Password).IsRequired();
             entity.Property(a => a.IdRole).IsRequired();
             
-            entity.HasOne<Role>()
-                .WithMany()
+            entity.HasOne(a => a.Role)
+                .WithMany(r => r.Users)
                 .HasForeignKey(a => a.IdRole)
                 .OnDelete(DeleteBehavior.Restrict);
         });

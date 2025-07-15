@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ConfPlan.Client.States;
 using Microsoft.AspNetCore.Components;
 
 namespace ConfPlan.Client.Components.Auth;
@@ -6,10 +7,14 @@ namespace ConfPlan.Client.Components.Auth;
 public partial class Auth : ComponentBase
 {
   private readonly NavigationManager _navigationManager;
+  private readonly UserState _userState;
 
-  public Auth(NavigationManager navigationManager)
+  public Auth(
+    NavigationManager navigationManager,
+    UserState userState)
   {
     _navigationManager = navigationManager;
+    _userState = userState;
   }
   
   private AuthForm formModel = new();
@@ -25,9 +30,20 @@ public partial class Auth : ComponentBase
         Console.WriteLine("Les mots de passe ne correspondent pas.");
         return;
       }
+      
+      var newUser = _userState.RegisterAsync(formModel.Email, formModel.Password);
 
-      // TODO: Ajouter la logique d'inscription
-      Console.WriteLine($"Inscription de : {formModel.Email}");
+      if (newUser != null)
+      {
+        Console.WriteLine($"Inscription de : {formModel.Email}");
+        // Rediriger vers le dashboard
+        _navigationManager.NavigateTo("/dashboard");
+      }
+      else
+      {
+        Console.WriteLine($"Problème lors de l'inscription");
+      }
+      
     }
     else
     {

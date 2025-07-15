@@ -1,8 +1,15 @@
+using ConfPlan.Api.Interfaces;
+using ConfPlan.Api.Repositories;
+using ConfPlan.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using Service.OAuth.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Ajout des services
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
+builder.Services.AddScoped<PasswordHasher>();
 
 builder.Services.AddControllers();
 
