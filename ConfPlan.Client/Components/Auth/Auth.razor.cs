@@ -19,6 +19,7 @@ public partial class Auth : ComponentBase
   
   private AuthForm formModel = new();
   private bool isRegisterMode = false;
+  private string? errorMessage;
 
   private async Task HandleSubmit()
   {
@@ -27,28 +28,28 @@ public partial class Auth : ComponentBase
       if (formModel.Password != formModel.ConfirmPassword)
       {
         // erreur basique
-        Console.WriteLine("Les mots de passe ne correspondent pas.");
+        errorMessage = ("Les mots de passe ne correspondent pas.");
         return;
       }
       
-      var newUser = _userState.RegisterAsync(formModel.Email, formModel.Password);
+      var result  = await _userState.RegisterAsync(formModel.Email, formModel.Password);
 
-      if (newUser != null)
+      if (!result.Success)
       {
-        Console.WriteLine($"Inscription de : {formModel.Email}");
-        // Rediriger vers le dashboard
-        _navigationManager.NavigateTo("/dashboard");
+        errorMessage = result.Message ?? "Une erreur inconnue s'est produite.";
+        return;
       }
       else
       {
-        Console.WriteLine($"Problème lors de l'inscription");
+        // Rediriger vers le dashboard
+        _navigationManager.NavigateTo("/dashboard");
       }
       
     }
     else
     {
       // TODO: Ajouter la logique de connexion
-      Console.WriteLine($"Connexion de : {formModel.Email}");
+      errorMessage = ($"Connexion de : {formModel.Email}");
     }
 
     // Rediriger vers le dashboard

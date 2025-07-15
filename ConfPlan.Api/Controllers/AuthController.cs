@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
     var existingUser= await _authRepository.GetOneUserByEmail(user);
     
     if (existingUser != null)
-      return Conflict("Email déjà utilisé");
+      return Conflict(new { message = "Email déjà utilisé" });
 
     var defaultRole = await _authRepository.GetRoleByName("Visiteur");
     if (defaultRole == null)
@@ -39,7 +39,6 @@ public class AuthController : ControllerBase
 
     var hashedPassword = _passwordHasher.HashPassword(user.Password);
     
-    // Créer un nouvel utilisateur avec le rôle par défaut    
     var newUser = new User
     {
       Id = Guid.NewGuid(),

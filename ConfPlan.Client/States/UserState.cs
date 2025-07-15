@@ -1,4 +1,5 @@
-﻿using ConfPlan.Shared;
+﻿using System.Text.Json;
+using ConfPlan.Shared;
 
 namespace ConfPlan.Client.States;
 
@@ -15,7 +16,7 @@ public class UserState
     _configuration = configuration;
   }
 
-  public async Task<User> RegisterAsync(string email, string password)
+  public async Task<RegisterResult> RegisterAsync(string email, string password)
   {
     var payload = new User
     {
@@ -23,20 +24,42 @@ public class UserState
       Password = password,
       IdRole = Guid.Empty
     };
-    
-    var response = await _httpClient.PostAsJsonAsync($"{_configuration["Url:ApiGateway"]}/api/auth/register", payload);
-    
-    if (response.IsSuccessStatusCode)
+
+    try
     {
-      return await response.Content.ReadFromJsonAsync<User>();
-    }
-    else
-    {
-      var error = await response.Content.ReadAsStringAsync();
-      Console.WriteLine($"Error during registration: {error}");
+      var response = await _httpClient.PostAsJsonAsync($"{_configuration["Url:ApiGateway"]}/api/auth/register", payload);
+    
+      if (response.IsSuccessStatusCode)
+      {
+        var user = await response.Content.ReadFromJsonAsync<User>();
+        return new RegisterResult
+        {
+          Success = true,
+          User = user
+        };
+      }
+      else
+      {
+        var errorResponse = await response.Content.ReadAsStringAsync();
+        var errorText = JsonSerializer.Deserialize<Dictionary<string, string>>(errorResponse);
+        return new RegisterResult
+        {
+          Success = false,
+          Message = errorText?["message"] ?? "Une erreur s'est produite lors de l'enregistrement."
+        };
+      }
+
 
     }
+    catch (Exception e)
+    {
+      return new RegisterResult
+      {
+        Success = false,
+        Message = $"Exception client : {e.Message}"
+      };
+    }
 
-    return null;
+    
   }
 }

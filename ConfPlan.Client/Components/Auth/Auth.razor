@@ -4,6 +4,11 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
     <div>
         <label>Email</label><br />
         <InputText @bind-Value="formModel.Email" />
