@@ -21,11 +21,23 @@ public class PostgresDbContext : DbContext
         var visiteurId = Guid.NewGuid();
         var adminId = Guid.NewGuid();
         var sponsorId = Guid.NewGuid();
+        var adminUserId = Guid.NewGuid();
+
 
         modelBuilder.Entity<Role>().HasData(
             new Role { Id = visiteurId, RoleName = "Visiteur" },
             new Role { Id = adminId, RoleName = "Admin" },
             new Role { Id = sponsorId, RoleName = "Sponsor" }
+        );
+
+        modelBuilder.Entity<User>().HasData(
+            new User
+            {
+                Id = adminUserId,
+                Email = "admin@confplan.dev",
+                Password = "$2a$12$ytsbB3JQWKgtrDjAFVJm3eASfxMqBqE8JlYDXBzkPbwt28oFP9unq",
+                IdRole = adminId
+            }
         );
         
         modelBuilder.Entity<User>(entity =>
