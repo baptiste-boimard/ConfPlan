@@ -1,0 +1,51 @@
+# Build & publish
+bin/
+obj/
+out/
+publish/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# Visual Studio Code
+.vscode/
+
+# ASP.NET secrets (optionnel)
+secrets.json
+
+# Logs
+*.log
+logs/
+
+# Dependency caches
+packages/
+*.nupkg
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Configuration
+appsettings.Development.json
+appsettings.Local.json
+
+# EF Core migrations snapshot (optional to ignore)
+**/*ModelSnapshot.cs
+
+# dotCover
+*.dotCover
+
+# Npgsql temporary or dump files (if any)
+*.sql
+*.dump
+
+# Other
+.env
+*.sqlite
