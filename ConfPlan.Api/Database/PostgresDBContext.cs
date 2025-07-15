@@ -65,11 +65,25 @@ public class PostgresDbContext : DbContext
             entity.HasKey(a => a.Id);
             entity.Property(a => a.Day).IsRequired();
             entity.Property(a => a.TimeSlot).IsRequired();
+            entity.Property(a => a.IdRoom).IsRequired();
             entity.Property(a => a.Title).IsRequired();
             entity.Property(a => a.Description).IsRequired();
             entity.Property(a => a.SpeakerName).IsRequired();
             entity.Property(a => a.SpeakerBio).IsRequired();
             entity.Property(a => a.SpeakerPhotoUrl).IsRequired();
+            
+            entity.HasOne(a => a.Room)
+                .WithOne(r => r.Conference)
+                .HasForeignKey<Conference>(a => a.IdRoom)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Room>(entity =>
+        {
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Name).IsRequired();
+            entity.Property(a => a.MaxCapacity).IsRequired();
+            entity.Property(a => a.CurrentCapacity).IsRequired();
         });
     }
 }

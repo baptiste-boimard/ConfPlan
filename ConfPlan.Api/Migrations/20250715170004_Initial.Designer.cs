@@ -12,7 +12,7 @@ using Service.OAuth.Database;
 namespace ConfPlan.Api.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20250715135927_Initial")]
+    [Migration("20250715170004_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -39,6 +39,9 @@ namespace ConfPlan.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("IdRoom")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("SpeakerBio")
                         .IsRequired()
                         .HasColumnType("text");
@@ -61,6 +64,9 @@ namespace ConfPlan.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdRoom")
+                        .IsUnique();
+
                     b.ToTable("Conferences");
                 });
 
@@ -81,19 +87,40 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("0da3180c-152e-49ef-b9e4-241173e03334"),
+                            Id = new Guid("20f8b649-959e-4a98-8532-639be6b77906"),
                             RoleName = "Visiteur"
                         },
                         new
                         {
-                            Id = new Guid("be97aee5-64d7-4691-a33a-fa634fffc277"),
+                            Id = new Guid("24dce4b5-374b-4ae8-9fb9-9152c71eaf09"),
                             RoleName = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("36ec4f04-92b8-465c-a9d7-3bad4fa9a3c0"),
+                            Id = new Guid("dd4e96ad-7f34-4261-9ac9-6fcb54520257"),
                             RoleName = "Sponsor"
                         });
+                });
+
+            modelBuilder.Entity("ConfPlan.Shared.Room", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CurrentCapacity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MaxCapacity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Room");
                 });
 
             modelBuilder.Entity("ConfPlan.Shared.User", b =>
@@ -122,11 +149,22 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7e4675c6-a89f-4e67-ae72-283f9ced5168"),
+                            Id = new Guid("f28f4692-b7d7-41a3-9ee1-8c241f628fa0"),
                             Email = "admin@confplan.dev",
-                            IdRole = new Guid("be97aee5-64d7-4691-a33a-fa634fffc277"),
+                            IdRole = new Guid("24dce4b5-374b-4ae8-9fb9-9152c71eaf09"),
                             Password = "$2a$12$ytsbB3JQWKgtrDjAFVJm3eASfxMqBqE8JlYDXBzkPbwt28oFP9unq"
                         });
+                });
+
+            modelBuilder.Entity("ConfPlan.Shared.Conference", b =>
+                {
+                    b.HasOne("ConfPlan.Shared.Room", "Room")
+                        .WithOne("Conference")
+                        .HasForeignKey("ConfPlan.Shared.Conference", "IdRoom")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("ConfPlan.Shared.User", b =>
@@ -143,6 +181,12 @@ namespace ConfPlan.Api.Migrations
             modelBuilder.Entity("ConfPlan.Shared.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("ConfPlan.Shared.Room", b =>
+                {
+                    b.Navigation("Conference")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

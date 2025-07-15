@@ -61,6 +61,7 @@ public class ConferenceController : ControllerBase
     conf.Day = updated.Day;
     conf.TimeSlot = updated.TimeSlot;
     conf.Title = updated.Title;
+    conf.Room = updated.Room;
     conf.Description = updated.Description;
     conf.SpeakerName = updated.SpeakerName;
     conf.SpeakerBio = updated.SpeakerBio;

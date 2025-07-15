@@ -4,19 +4,113 @@
 
 <button @onclick="HandleLogout">Se déconnecter</button>
 
-@if (_userState.CurrentUser is not null)
-{
-    <p>Connecté en tant que : @_userState.CurrentUser.Email (@_userState.CurrentUser.Role?.RoleName)</p>
-}
-else
-{
-    <p>Non connecté</p>
-}
+
+<p>Connecté en tant que : @_userState.CurrentUser.Email (@_userState.CurrentUser.Role?.RoleName)</p>
+
 
 @if (_userState.CurrentUser?.Role?.RoleName == "Admin")
 {
     <button @onclick="GoToAdmin">
         Espace Administrateur
-    Espace Organisateur
     </button>
 }
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<hr/>
+
+<h4>Conférences existantes</h4>
+<table class="table-conferences">
+    <thead>
+    <tr>
+        <th>Jour</th>
+        <th>Horaire</th>
+        <th>Salle</th>
+        <th>Remplissage</th>
+        <th>Titre</th>
+        <th>Description</th>
+        <th>Conférencier</th>
+        <th>Photo</th>
+        <th>Biographie</th>
+        <th>Inscription</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var conf in conferences)
+    {
+        <tr>
+            <td>@conf.Day</td>
+            <td>@conf.TimeSlot</td>
+            <td>@conf.Room</td>
+            <td>@conf.Room.MaxCapacity / @conf.Room.CurrentCapacity</td>
+            <td>@conf.Title</td>
+            <td>@conf.Description</td>
+            <td>@conf.SpeakerName</td>
+            <td>
+                <img src="@conf.SpeakerPhotoUrl" alt="Photo" />
+            </td>
+            <td>@conf.SpeakerBio</td>
+            <td>
+                @* <button @onclick="() => Subscription(conf)">✏️</button> *@
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<br/>
+
+<style>
+    .table-conferences {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-family: Arial, sans-serif;
+    }
+
+    .table-conferences th, .table-conferences td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+
+    .table-conferences th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .table-conferences tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+
+    .table-conferences tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .table-conferences td img {
+        max-height: 50px;
+        border-radius: 4px;
+    }
+
+    .table-conferences td button {
+        margin-right: 6px;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+
+    .table-conferences td button:last-child {
+        background-color: #dc3545;
+    }
+
+    .table-conferences td button:hover {
+        opacity: 0.85;
+    }
+</style>

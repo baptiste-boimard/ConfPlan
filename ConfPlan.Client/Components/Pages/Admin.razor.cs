@@ -26,6 +26,13 @@ public partial class Admin : ComponentBase
     "16h - 17h", "17h - 18h"
   }; 
   
+  private List<string> rooms = new()
+  {
+    "Salle A", "Salle B", "Salle C", "Salle D",
+    "Salle E", "Salle F", "Salle G", "Salle H",
+    "Salle I", "Salle J"
+  };
+  
   private string? errorMessage;
 
   

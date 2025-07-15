@@ -18,6 +18,8 @@ else
         <tr>
             <th>Jour</th>
             <th>Horaire</th>
+            <th>Salle</th>
+            <th>Remplissage</th>
             <th>Titre</th>
             <th>Description</th>
             <th>Conférencier</th>
@@ -32,6 +34,8 @@ else
             <tr>
                 <td>@conf.Day</td>
                 <td>@conf.TimeSlot</td>
+                <td>@conf.Room</td>
+                <td>@conf.Room.MaxCapacity / @conf.Room.CurrentCapacity</td>
                 <td>@conf.Title</td>
                 <td>@conf.Description</td>
                 <td>@conf.SpeakerName</td>
@@ -88,6 +92,16 @@ else
             </div>
 
             <div>
+                <label>Salle :</label>
+                <select @bind="newConference.Room">
+                    @foreach (var slot in rooms)
+                    {
+                        <option>@slot</option>
+                    }
+                </select>
+            </div>
+
+            <div>
                 <label>Titre :</label>
                 <InputText @bind-Value="newConference.Title"/>
             </div>
@@ -137,6 +151,16 @@ else
                 <label>Créneau horaire :</label>
                 <select @bind="editingConference.TimeSlot">
                     @foreach (var slot in timeSlots)
+                    {
+                        <option>@slot</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label>Salle :</label>
+                <select @bind="newConference.Room">
+                    @foreach (var slot in rooms)
                     {
                         <option>@slot</option>
                     }

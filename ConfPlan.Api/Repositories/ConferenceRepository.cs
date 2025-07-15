@@ -18,13 +18,16 @@ public class ConferenceRepository : IConferenceRepository
 
   public async Task<List<Conference>> GetAllConferences()
   {
-    var conferences = await _context.Conferences.ToListAsync();
+    var conferences = await _context.Conferences
+      .Include(c => c.Room)
+      .ToListAsync();
     return conferences;
   }
   
   public async Task<Conference> GetConferenceById(Guid id)
   {
     var conference = await _context.Conferences
+      .Include(c => c.Room)
       .FirstOrDefaultAsync(c => c.Id == id);
 
     if (conference != null) return conference;
@@ -35,6 +38,7 @@ public class ConferenceRepository : IConferenceRepository
   public async Task<Conference> GetConferenceByDayAndTimeSlot(Conference conf)
   { 
     var existingConferenceAtSameDate = await _context.Conferences
+      .Include(c => c.Room)
       .FirstOrDefaultAsync(c => c.Day == conf.Day && c.TimeSlot == conf.TimeSlot);
 
     if (existingConferenceAtSameDate != null) return existingConferenceAtSameDate;
