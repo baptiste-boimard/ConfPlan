@@ -12,7 +12,9 @@ public partial class Admin : ComponentBase
   [Inject] private ConferenceState _conferenceState { get; set; }
   
   private bool isLoaded = false;
-  private bool isEditing = false;
+  Conference? editingConference = null;
+  bool isEditing => editingConference != null;
+  // private bool isEditing = false;
   private List<Conference> conferences = new();
   private Conference currentConference = new();
   
@@ -60,24 +62,10 @@ public partial class Admin : ComponentBase
       StateHasChanged();
     }
   }
-  
-  private async Task HandleSubmit()
-  {
-    // bool success = isEditing
-    //   ? await _conferenceState.UpdateAsync(currentConference)
-    //   : await _conferenceState.CreateAsync(currentConference);
-    //
-    // if (success)
-    // {
-    //   await LoadConferences();
-    //   currentConference = new();
-    //   isEditing = false;
-    // }
-  }
 
   private void EditConference(Conference conf)
   {
-    currentConference = new Conference
+    editingConference = new Conference
     {
       Id = conf.Id,
       Day = conf.Day,
@@ -88,7 +76,6 @@ public partial class Admin : ComponentBase
       SpeakerBio = conf.SpeakerBio,
       SpeakerPhotoUrl = conf.SpeakerPhotoUrl
     };
-    isEditing = true;
   }
 
   private async Task DeleteConference(Conference conf)
@@ -97,7 +84,7 @@ public partial class Admin : ComponentBase
     
     if (!result.Success)
     {
-      errorMessage = result.Message ?? "Une erreur s'est produite lors de l'enregistrement.";
+      errorMessage = result.Message ?? "Une erreur s'est produite lors de l'effacement de la conférence.";
     }
     else
     {
@@ -105,12 +92,6 @@ public partial class Admin : ComponentBase
       
       StateHasChanged();
     }
-  }
-
-  private void CancelEdit()
-  {
-    isEditing = false;
-    currentConference = new();
   }
   
   private async Task HandleAdd()
@@ -128,6 +109,24 @@ public partial class Admin : ComponentBase
       newConference = new();
       
       StateHasChanged();
+    }
+  }
+  
+  private async Task HandleUpdate()
+  {
+    if (editingConference is null) return;
+
+    var result = await _conferenceState.UpdateAsync(editingConference);
+
+    if (result.Success)
+    {
+      await LoadConferences();
+      editingConference = null;
+      StateHasChanged();
+    }
+    else
+    {
+      errorMessage = result.Message ?? "Erreur lors de la mise à jour.";
     }
   }
 }

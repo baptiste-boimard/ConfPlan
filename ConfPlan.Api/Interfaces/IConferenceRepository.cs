@@ -8,5 +8,6 @@ public interface IConferenceRepository
   Task<Conference> GetConferenceById(Guid id);
   Task<Conference> GetConferenceByDayAndTimeSlot(Conference conf);
   Task<Conference> AddConference(Conference conf);
+  Task<Conference> UpdateConference(Conference conf);
   Task<Conference> DeleteConference(Conference conf);
 }

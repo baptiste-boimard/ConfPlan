@@ -6,14 +6,14 @@ namespace ConfPlan.Client.States;
 public class UserState
 {
   private readonly HttpClient _httpClient;
-  private readonly IConfiguration _configuration;
+  private readonly IConfiguration _config;
 
   public UserState(
     HttpClient httpClient,
-    IConfiguration configuration)
+    IConfiguration config)
   {
     _httpClient = httpClient;
-    _configuration = configuration;
+    _config = config;
   }
 
   public User? CurrentUser { get; private set; }
@@ -38,7 +38,7 @@ public class UserState
     };
 
    
-    var response = await _httpClient.PostAsJsonAsync($"{_configuration["Url:ApiGateway"]}/api/auth/register", payload);
+    var response = await _httpClient.PostAsJsonAsync($"{_config["Url:ApiGateway"]}/api/auth/register", payload);
   
     if (response.IsSuccessStatusCode)
     {
@@ -71,7 +71,7 @@ public class UserState
     };
     
     var response = await _httpClient.PostAsJsonAsync(
-      $"{_configuration["Url:ApiGateway"]}/api/auth/login", payload);
+      $"{_config["Url:ApiGateway"]}/api/auth/login", payload);
 
     if (response.IsSuccessStatusCode)
     {

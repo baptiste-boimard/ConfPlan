@@ -13,12 +13,16 @@ else
     <hr/>
 
     <h4>Conférences existantes</h4>
-    <table>
+    <table class="table-conferences">
         <thead>
         <tr>
             <th>Jour</th>
             <th>Horaire</th>
             <th>Titre</th>
+            <th>Description</th>
+            <th>Conférencier</th>
+            <th>Photo</th>
+            <th>Biographie</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -29,9 +33,15 @@ else
                 <td>@conf.Day</td>
                 <td>@conf.TimeSlot</td>
                 <td>@conf.Title</td>
+                <td>@conf.Description</td>
+                <td>@conf.SpeakerName</td>
                 <td>
-                    <button @onclick="() => EditConference(conf)">Modifier</button>
-                    <button @onclick="() => DeleteConference(conf)">Supprimer</button>
+                    <img src="@conf.SpeakerPhotoUrl" alt="Photo" />
+                </td>
+                <td>@conf.SpeakerBio</td>
+                <td>
+                    <button @onclick="() => EditConference(conf)">✏️</button>
+                    <button @onclick="() => DeleteConference(conf)">🗑️</button>
                 </td>
             </tr>
         }
@@ -48,58 +58,173 @@ else
     }
     
     <br/>
+    
+    @if (!isEditing)
+    {
+        <h4>Ajouter une nouvelle conférence</h4>
+        
+        <EditForm Model="@newConference" OnValidSubmit="HandleAdd">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
 
-    <h4>Ajouter une nouvelle conférence</h4>
+            <div>
+                <label>Jour :</label>
+                <select @bind="newConference.Day">
+                    <option value="">-- Choisir un jour --</option>
+                    <option value="Jour 1">Jour 1</option>
+                    <option value="Jour 2">Jour 2</option>
+                    <option value="Jour 3">Jour 3</option>
+                </select>
+            </div>
 
-    <EditForm Model="@newConference" OnValidSubmit="HandleAdd">
-        <DataAnnotationsValidator/>
-        <ValidationSummary/>
+            <div>
+                <label>Créneau horaire :</label>
+                <select @bind="newConference.TimeSlot">
+                    @foreach (var slot in timeSlots)
+                    {
+                        <option>@slot</option>
+                    }
+                </select>
+            </div>
 
-        <div>
-            <label>Jour :</label>
-            <select @bind="newConference.Day">
-                <option value="">-- Choisir un jour --</option>
-                <option value="Jour 1">Jour 1</option>
-                <option value="Jour 2">Jour 2</option>
-                <option value="Jour 3">Jour 3</option>
-            </select>
-        </div>
+            <div>
+                <label>Titre :</label>
+                <InputText @bind-Value="newConference.Title"/>
+            </div>
 
-        <div>
-            <label>Créneau horaire :</label>
-            <select @bind="newConference.TimeSlot">
-                @foreach (var slot in timeSlots)
-                {
-                    <option>@slot</option>
-                }
-            </select>
-        </div>
+            <div>
+                <label>Description :</label>
+                <InputTextArea @bind-Value="newConference.Description"/>
+            </div>
 
-        <div>
-            <label>Titre :</label>
-            <InputText @bind-Value="newConference.Title"/>
-        </div>
+            <div>
+                <label>Conférencier - Nom :</label>
+                <InputText @bind-Value="newConference.SpeakerName"/>
+            </div>
 
-        <div>
-            <label>Description :</label>
-            <InputTextArea @bind-Value="newConference.Description"/>
-        </div>
+            <div>
+                <label>Conférencier - Biographie :</label>
+                <InputTextArea @bind-Value="newConference.SpeakerBio"/>
+            </div>
 
-        <div>
-            <label>Conférencier - Nom :</label>
-            <InputText @bind-Value="newConference.SpeakerName"/>
-        </div>
+            <div>
+                <label>Conférencier - Photo (URL) :</label>
+                <InputText @bind-Value="newConference.SpeakerPhotoUrl"/>
+            </div>
 
-        <div>
-            <label>Conférencier - Biographie :</label>
-            <InputTextArea @bind-Value="newConference.SpeakerBio"/>
-        </div>
+            <button type="submit">Ajouter Conférence</button>
+        </EditForm>
+    }
+    else
+    {
+        <h4>Modifier la conférence</h4>
 
-        <div>
-            <label>Conférencier - Photo (URL) :</label>
-            <InputText @bind-Value="newConference.SpeakerPhotoUrl"/>
-        </div>
+        <EditForm Model="@editingConference" OnValidSubmit="HandleUpdate">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-        <button type="submit">Ajouter Conférence</button>
-    </EditForm>
+            <div>
+                <label>Jour :</label>
+                <select @bind="editingConference.Day">
+                    <option value="">-- Choisir un jour --</option>
+                    <option value="Jour 1">Jour 1</option>
+                    <option value="Jour 2">Jour 2</option>
+                    <option value="Jour 3">Jour 3</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Créneau horaire :</label>
+                <select @bind="editingConference.TimeSlot">
+                    @foreach (var slot in timeSlots)
+                    {
+                        <option>@slot</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label>Titre :</label>
+                <InputText @bind-Value="editingConference.Title" />
+            </div>
+
+            <div>
+                <label>Description :</label>
+                <InputTextArea @bind-Value="editingConference.Description" />
+            </div>
+
+            <div>
+                <label>Conférencier - Nom :</label>
+                <InputText @bind-Value="editingConference.SpeakerName" />
+            </div>
+
+            <div>
+                <label>Conférencier - Biographie :</label>
+                <InputTextArea @bind-Value="editingConference.SpeakerBio" />
+            </div>
+
+            <div>
+                <label>Conférencier - Photo (URL) :</label>
+                <InputText @bind-Value="editingConference.SpeakerPhotoUrl" />
+            </div>
+
+            <button type="submit">Mettre à jour</button>
+            <button type="button" @onclick="() => editingConference = null" style="margin-left: 10px;">Annuler</button>
+        </EditForm>
+    }
+
+
+    
 }
+
+<style>
+    .table-conferences {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-family: Arial, sans-serif;
+    }
+
+    .table-conferences th, .table-conferences td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+
+    .table-conferences th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .table-conferences tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+
+    .table-conferences tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .table-conferences td img {
+        max-height: 50px;
+        border-radius: 4px;
+    }
+
+    .table-conferences td button {
+        margin-right: 6px;
+        padding: 6px 10px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+
+    .table-conferences td button:last-child {
+        background-color: #dc3545;
+    }
+
+    .table-conferences td button:hover {
+        opacity: 0.85;
+    }
+</style>

@@ -21,12 +21,7 @@ public class ConferenceRepository : IConferenceRepository
     var conferences = await _context.Conferences.ToListAsync();
     return conferences;
   }
-
-  public Task<Conference> GetConferenceById(Conference conf)
-  {
-    throw new NotImplementedException();
-  }
-
+  
   public async Task<Conference> GetConferenceById(Guid id)
   {
     var conference = await _context.Conferences
@@ -54,6 +49,16 @@ public class ConferenceRepository : IConferenceRepository
 
     if (result <= 0) return null;
 
+    return conf;
+  }
+
+  public async Task<Conference> UpdateConference(Conference conf)
+  {
+    _context.Conferences.Update(conf);
+    var result = await _context.SaveChangesAsync();
+    
+    if(result <= 0) return null;
+    
     return conf;
   }
 

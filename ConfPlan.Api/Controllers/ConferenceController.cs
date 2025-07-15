@@ -51,11 +51,12 @@ public class ConferenceController : ControllerBase
     return Ok(conf);
   }
 
-  [HttpPut("update")]
-  public async Task<IActionResult> Update(Guid id, [FromBody] Conference updated)
+  [HttpPost("update")]
+  public async Task<IActionResult> Update([FromBody] Conference updated)
   {
-    var conf = await _context.Conferences.FindAsync(id);
-    if (conf == null) return NotFound();
+    var conf = await _context.Conferences.FindAsync(updated.Id);
+    
+    if (conf == null) return NotFound( new { message = "La conférence n'existe pas." });
 
     conf.Day = updated.Day;
     conf.TimeSlot = updated.TimeSlot;
@@ -65,7 +66,11 @@ public class ConferenceController : ControllerBase
     conf.SpeakerBio = updated.SpeakerBio;
     conf.SpeakerPhotoUrl = updated.SpeakerPhotoUrl;
 
-    await _context.SaveChangesAsync();
+    var updatingConference = await _conferenceRepository.UpdateConference(conf);
+    
+    if(updatingConference == null)
+      return StatusCode(500, new { message = "Erreur lors de la mise à jour de la conférence." });
+    
     return Ok(conf);
   }
 

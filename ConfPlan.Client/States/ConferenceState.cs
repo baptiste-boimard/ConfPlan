@@ -64,10 +64,28 @@ public class ConferenceState
     }
   }
 
-  public async Task<bool> UpdateAsync(Conference conf)
+  public async Task<ConferenceResult> UpdateAsync(Conference conf)
   {
-    var response = await _httpClient.PutAsJsonAsync($"{_config["Url:ApiGateway"]}/api/conferences/update", conf);
-    return response.IsSuccessStatusCode;
+    var response = await _httpClient.PostAsJsonAsync($"{_config["Url:ApiGateway"]}/api/conferences/update", conf);
+
+    if (response.IsSuccessStatusCode)
+    {
+      return new ConferenceResult
+      {
+        Success = true,
+        Conference = await response.Content.ReadFromJsonAsync<Conference>()
+      };
+    }
+    else
+    {
+      var errorResponse = await response.Content.ReadAsStringAsync();
+      var errorText = JsonSerializer.Deserialize<Dictionary<string, string>>(errorResponse);
+      return new ConferenceResult
+      {
+        Success = false,
+        Message = errorText?["message"] ?? "Une erreur s'est produite lors de la mise à jour."
+      };
+    }
   }
 
   public async Task<ConferenceResult> DeleteAsync(Conference conf)
@@ -88,7 +106,7 @@ public class ConferenceState
       return new ConferenceResult
       {
         Success = false,
-        Message = errorText?["message"] ?? "Une erreur s'est produite lors de l'enregistrement."
+        Message = errorText?["message"] ?? "Une erreur s'est produite lors de l'effacement de la conférence."
       };
     }
   }
