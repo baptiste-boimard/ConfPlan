@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Ajout des services
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IConferenceRepository, ConferenceRepository>();
 
 builder.Services.AddScoped<PasswordHasher>();
 

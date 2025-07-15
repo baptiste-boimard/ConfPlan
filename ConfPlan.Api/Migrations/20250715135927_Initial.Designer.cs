@@ -12,7 +12,7 @@ using Service.OAuth.Database;
 namespace ConfPlan.Api.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20250715095237_Initial")]
+    [Migration("20250715135927_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,6 +24,45 @@ namespace ConfPlan.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ConfPlan.Shared.Conference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Day")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SpeakerBio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SpeakerName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SpeakerPhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TimeSlot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Conferences");
+                });
 
             modelBuilder.Entity("ConfPlan.Shared.Role", b =>
                 {
@@ -38,6 +77,23 @@ namespace ConfPlan.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("0da3180c-152e-49ef-b9e4-241173e03334"),
+                            RoleName = "Visiteur"
+                        },
+                        new
+                        {
+                            Id = new Guid("be97aee5-64d7-4691-a33a-fa634fffc277"),
+                            RoleName = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("36ec4f04-92b8-465c-a9d7-3bad4fa9a3c0"),
+                            RoleName = "Sponsor"
+                        });
                 });
 
             modelBuilder.Entity("ConfPlan.Shared.User", b =>
@@ -62,6 +118,15 @@ namespace ConfPlan.Api.Migrations
                     b.HasIndex("IdRole");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("7e4675c6-a89f-4e67-ae72-283f9ced5168"),
+                            Email = "admin@confplan.dev",
+                            IdRole = new Guid("be97aee5-64d7-4691-a33a-fa634fffc277"),
+                            Password = "$2a$12$ytsbB3JQWKgtrDjAFVJm3eASfxMqBqE8JlYDXBzkPbwt28oFP9unq"
+                        });
                 });
 
             modelBuilder.Entity("ConfPlan.Shared.User", b =>

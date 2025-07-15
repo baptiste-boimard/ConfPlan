@@ -24,6 +24,9 @@ public partial class Admin : ComponentBase
     "16h - 17h", "17h - 18h"
   }; 
   
+  private string? errorMessage;
+
+  
   protected override async Task OnInitializedAsync()
   {
     await LoadConferences();
@@ -45,21 +48,31 @@ public partial class Admin : ComponentBase
   
   private async Task LoadConferences()
   {
-    conferences = await _conferenceState.GetAllAsync();
+    var result = await _conferenceState.GetAllAsync();
+    
+    if(!result.Success)
+    {
+      errorMessage = result.Message ?? "Une erreur s'est produite lors du chargement des conférences.";
+    }
+    else
+    {
+      conferences = result.Conferences;
+      StateHasChanged();
+    }
   }
   
   private async Task HandleSubmit()
   {
-    bool success = isEditing
-      ? await _conferenceState.UpdateAsync(currentConference)
-      : await _conferenceState.CreateAsync(currentConference);
-
-    if (success)
-    {
-      await LoadConferences();
-      currentConference = new();
-      isEditing = false;
-    }
+    // bool success = isEditing
+    //   ? await _conferenceState.UpdateAsync(currentConference)
+    //   : await _conferenceState.CreateAsync(currentConference);
+    //
+    // if (success)
+    // {
+    //   await LoadConferences();
+    //   currentConference = new();
+    //   isEditing = false;
+    // }
   }
 
   private void EditConference(Conference conf)
@@ -78,10 +91,20 @@ public partial class Admin : ComponentBase
     isEditing = true;
   }
 
-  private async Task DeleteConference(Guid id)
+  private async Task DeleteConference(Conference conf)
   {
-    await _conferenceState.DeleteAsync(id);
-    await LoadConferences();
+    var result = await _conferenceState.DeleteAsync(conf);
+    
+    if (!result.Success)
+    {
+      errorMessage = result.Message ?? "Une erreur s'est produite lors de l'enregistrement.";
+    }
+    else
+    {
+      await LoadConferences();
+      
+      StateHasChanged();
+    }
   }
 
   private void CancelEdit()
@@ -92,12 +115,19 @@ public partial class Admin : ComponentBase
   
   private async Task HandleAdd()
   {
-    newConference.Id = Guid.NewGuid();
-    
-    // Envoyer vers une API si elle existe (ex: via HttpClient)
-    Console.WriteLine($"Conférence ajoutée : {JsonSerializer.Serialize(newConference)}");
+    var result = await _conferenceState.CreateAsync(newConference);
 
-    // Reset form
-    newConference = new();
+    if (!result.Success)
+    {
+      errorMessage = result.Message ?? "Une erreur s'est produite lors de l'enregistrement.";
+    }
+    else
+    {
+      await LoadConferences();
+      
+      newConference = new();
+      
+      StateHasChanged();
+    }
   }
 }

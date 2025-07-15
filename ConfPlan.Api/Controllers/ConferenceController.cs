@@ -1,36 +1,57 @@
-﻿using ConfPlan.Shared;
+﻿using ConfPlan.Api.Interfaces;
+using ConfPlan.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Service.OAuth.Database;
 
 namespace ConfPlan.Api.Controllers;
 
+[ApiController]
+[Route("api/conferences")]
 public class ConferenceController : ControllerBase
 {
+  private readonly IConferenceRepository _conferenceRepository;
   private readonly PostgresDbContext _context;
 
-  public ConferenceController(PostgresDbContext context)
+  public ConferenceController(
+    IConferenceRepository conferenceRepository,
+    PostgresDbContext context)
   {
+    _conferenceRepository = conferenceRepository;
     _context = context;
   }
 
-  [HttpGet]
+  [HttpGet("getall")]
   public async Task<IActionResult> GetAll()
   {
-    var conferences = await _context.Conferences.ToListAsync();
+    var conferences = await _conferenceRepository.GetAllConferences();
+    
     return Ok(conferences);
   }
 
-  [HttpPost]
+  [HttpPost ("create")]
   public async Task<IActionResult> Create([FromBody] Conference conf)
   {
+    if (string.IsNullOrWhiteSpace(conf.Day) || string.IsNullOrWhiteSpace(conf.TimeSlot))
+      return BadRequest("Champs requis");
+    
+    // Vérifier si une conference existe déjà sur les meme creanaux
+    var existingConferenceAtSameDate= await _conferenceRepository.GetConferenceByDayAndTimeSlot(conf);
+
+    if (existingConferenceAtSameDate != null)
+      return Conflict(new { message = "Ce créneau est dèjà pris" });
+    
     conf.Id = Guid.NewGuid();
-    _context.Conferences.Add(conf);
-    await _context.SaveChangesAsync();
+
+    var newConference = await _conferenceRepository.AddConference(conf);
+    
+    if(newConference == null)
+      return StatusCode(500, new { message = "Erreur lors de l'enregistrement de la conférence." });
+    
     return Ok(conf);
   }
 
-  [HttpPut("{id}")]
+  [HttpPut("update")]
   public async Task<IActionResult> Update(Guid id, [FromBody] Conference updated)
   {
     var conf = await _context.Conferences.FindAsync(id);
@@ -48,14 +69,18 @@ public class ConferenceController : ControllerBase
     return Ok(conf);
   }
 
-  [HttpDelete("{id}")]
-  public async Task<IActionResult> Delete(Guid id)
+  [HttpPost("delete")]
+  public async Task<IActionResult> Delete([FromBody] Conference conf)
   {
-    var conf = await _context.Conferences.FindAsync(id);
-    if (conf == null) return NotFound();
-
-    _context.Conferences.Remove(conf);
-    await _context.SaveChangesAsync();
-    return NoContent();
+    var existingConf = await _context.Conferences.FindAsync(conf.Id);
+    
+    if (conf == null) return NotFound( new { message = "La conférence n'existe pas." });
+    
+    var result = await _conferenceRepository.DeleteConference(existingConf);
+    
+    if(result == null)
+      return StatusCode(500, new { message = "Erreur lors de la suppression de la conférence." });
+    
+    return Ok(conf);
   }
 }

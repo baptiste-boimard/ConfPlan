@@ -1,4 +1,5 @@
-﻿using ConfPlan.Shared;
+﻿using System.Text.Json;
+using ConfPlan.Shared;
 
 namespace ConfPlan.Client.States;
 
@@ -13,26 +14,82 @@ public class ConferenceState
     _config = config;
   }
 
-  public async Task<List<Conference>> GetAllAsync()
+  public async Task<ConferenceResult> GetAllAsync()
   {
-    return await _httpClient.GetFromJsonAsync<List<Conference>>($"{_config["Url:ApiGateway"]}/api/conferences") ?? new();
+    var response = await _httpClient.GetAsync($"{_config["Url:ApiGateway"]}/api/conferences/getall");
+
+    if (response.IsSuccessStatusCode)
+    {
+      var conferences = await response.Content.ReadFromJsonAsync<List<Conference>>();
+      return new ConferenceResult
+      {
+        Success = true,
+        Conferences = conferences ?? new List<Conference>()
+      };
+    }
+    else
+    {
+      var errorResponse = await response.Content.ReadAsStringAsync();
+      var errorText = JsonSerializer.Deserialize<Dictionary<string, string>>(errorResponse);
+      return new ConferenceResult
+      {
+        Success = false,
+        Message = errorText?["message"] ?? "Problème au niveau de la récupération des conférence."
+      };
+    }
   }
 
-  public async Task<bool> CreateAsync(Conference conf)
+  public async Task<ConferenceResult> CreateAsync(Conference conf)
   {
-    var response = await _httpClient.PostAsJsonAsync($"{_config["Url:ApiGateway"]}/api/conferences", conf);
-    return response.IsSuccessStatusCode;
+    
+    var response = await _httpClient.PostAsJsonAsync($"{_config["Url:ApiGateway"]}/api/conferences/create", conf);
+
+    if (response.IsSuccessStatusCode)
+    {
+      return new ConferenceResult
+      {
+        Success = true,
+        Conference = await response.Content.ReadFromJsonAsync<Conference>()
+      };
+    }
+    else
+    {
+      var errorResponse = await response.Content.ReadAsStringAsync();
+      var errorText = JsonSerializer.Deserialize<Dictionary<string, string>>(errorResponse);
+      return new ConferenceResult
+      {
+        Success = false,
+        Message = errorText?["message"] ?? "Une erreur s'est produite lors de l'enregistrement."
+      };
+    }
   }
 
   public async Task<bool> UpdateAsync(Conference conf)
   {
-    var response = await _httpClient.PutAsJsonAsync($"{_config["Url:ApiGateway"]}/api/conferences/{conf.Id}", conf);
+    var response = await _httpClient.PutAsJsonAsync($"{_config["Url:ApiGateway"]}/api/conferences/update", conf);
     return response.IsSuccessStatusCode;
   }
 
-  public async Task<bool> DeleteAsync(Guid id)
+  public async Task<ConferenceResult> DeleteAsync(Conference conf)
   {
-    var response = await _httpClient.DeleteAsync($"{_config["Url:ApiGateway"]}/api/conferences/{id}");
-    return response.IsSuccessStatusCode;
+    var response = await _httpClient.PostAsJsonAsync($"{_config["Url:ApiGateway"]}/api/conferences/delete", conf);
+    
+    if (response.IsSuccessStatusCode)
+    {
+      return new ConferenceResult
+      {
+        Success = true
+      };
+    }
+    else
+    {
+      var errorResponse = await response.Content.ReadAsStringAsync();
+      var errorText = JsonSerializer.Deserialize<Dictionary<string, string>>(errorResponse);
+      return new ConferenceResult
+      {
+        Success = false,
+        Message = errorText?["message"] ?? "Une erreur s'est produite lors de l'enregistrement."
+      };
+    }
   }
 }

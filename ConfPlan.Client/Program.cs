@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Ajout des services
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<UserState>();
+builder.Services.AddScoped<ConferenceState>();
 
 
 builder.Services.AddRazorComponents()
