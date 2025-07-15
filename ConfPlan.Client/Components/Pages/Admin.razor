@@ -1,16 +1,146 @@
 ﻿@page "/admin"
-<h3>Admin</h3>
 
-@if (_userState.CurrentUser == null)
+<h1>Dashboard Organisateur</h1>
+
+<h3>Gestion des conférences</h3>
+
+@if (!isLoaded)
 {
-    <p>Redirection vers /auth...</p>
-}
-else if (_userState.CurrentUser?.Role?.RoleName != "Admin")
-{
-    <p>Accès refusé.</p>
+    <p>Chargement...</p>
 }
 else
 {
-    <h1>Dashboard Organisateur</h1>
-    <!-- Tu mettras ici les actions : Ajouter/modifier/supprimer conférence -->
-}
+    <EditForm Model="currentConference" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label>Jour</label>
+            <InputSelect @bind-Value="currentConference.Day">
+                <option value="Jour 1">Jour 1</option>
+                <option value="Jour 2">Jour 2</option>
+                <option value="Jour 3">Jour 3</option>
+            </InputSelect>
+        </div>
+
+        <div>
+            <label>Créneau Horaire</label>
+            <InputSelect @bind-Value="currentConference.TimeSlot">
+                @foreach (var slot in TimeSlots)
+                {
+                    <option value="@slot">@slot</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div>
+            <label>Titre</label>
+            <InputText @bind-Value="currentConference.Title" />
+        </div>
+
+        <div>
+            <label>Description</label>
+            <InputTextArea @bind-Value="currentConference.Description" />
+        </div>
+
+        <div>
+            <label>Nom du conférencier</label>
+            <InputText @bind-Value="currentConference.SpeakerName" />
+        </div>
+
+        <div>
+            <label>Biographie</label>
+            <InputTextArea @bind-Value="currentConference.SpeakerBio" />
+        </div>
+
+        <div>
+            <label>URL Photo</label>
+            <InputText @bind-Value="currentConference.SpeakerPhotoUrl" />
+        </div>
+
+        <button type="submit">@(isEditing ? "Mettre à jour" : "Ajouter")</button>
+        @if (isEditing)
+        {
+            <button type="button" @onclick="CancelEdit">Annuler</button>
+        }
+    </EditForm>
+
+    <hr />
+
+    <h4>Conférences existantes</h4>
+    <table>
+        <thead>
+        <tr>
+            <th>Jour</th>
+            <th>Horaire</th>
+            <th>Titre</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var conf in conferences)
+        {
+            <tr>
+                <td>@conf.Day</td>
+                <td>@conf.TimeSlot</td>
+                <td>@conf.Title</td>
+                <td>
+                    <button @onclick="() => EditConference(conf)">Modifier</button>
+                    <button @onclick="() => DeleteConference(conf.Id)">Supprimer</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+<EditForm Model="@newConference" OnValidSubmit="HandleAdd">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Jour :</label>
+        <select @bind="newConference.Day">
+            <option value="">-- Choisir un jour --</option>
+            <option value="Jour 1">Jour 1</option>
+            <option value="Jour 2">Jour 2</option>
+            <option value="Jour 3">Jour 3</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Créneau horaire :</label>
+        <select @bind="newConference.TimeSlot">
+            @foreach (var slot in timeSlots)
+            {
+                <option>@slot</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label>Titre :</label>
+        <InputText @bind-Value="newConference.Title" />
+    </div>
+
+    <div>
+        <label>Description :</label>
+        <InputTextArea @bind-Value="newConference.Description" />
+    </div>
+
+    <div>
+        <label>Conférencier - Nom :</label>
+        <InputText @bind-Value="newConference.SpeakerName" />
+    </div>
+
+    <div>
+        <label>Conférencier - Biographie :</label>
+        <InputTextArea @bind-Value="newConference.SpeakerBio" />
+    </div>
+
+    <div>
+        <label>Conférencier - Photo (URL) :</label>
+        <InputText @bind-Value="newConference.SpeakerPhotoUrl" />
+    </div>
+
+    <button type="submit">Ajouter Conférence</button>
+</EditForm>

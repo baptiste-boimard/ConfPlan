@@ -13,6 +13,7 @@ public class PostgresDbContext : DbContext
     
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
+    public DbSet<Conference> Conferences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +58,18 @@ public class PostgresDbContext : DbContext
         {
             entity.HasKey(a => a.Id);
             entity.Property(a => a.RoleName).IsRequired();
+        });
+        
+        modelBuilder.Entity<Conference>(entity =>
+        {
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Day).IsRequired();
+            entity.Property(a => a.TimeSlot).IsRequired();
+            entity.Property(a => a.Title).IsRequired();
+            entity.Property(a => a.Description).IsRequired();
+            entity.Property(a => a.SpeakerName).IsRequired();
+            entity.Property(a => a.SpeakerBio).IsRequired();
+            entity.Property(a => a.SpeakerPhotoUrl).IsRequired();
         });
     }
 }
