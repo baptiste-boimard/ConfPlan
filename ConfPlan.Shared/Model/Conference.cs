@@ -11,9 +11,8 @@ public class Conference
   public string Title { get; set; } = string.Empty;
   public string Description { get; set; } = string.Empty;
 
-  public string SpeakerName { get; set; } = string.Empty;
-  public string? SpeakerBio { get; set; }
-  public string? SpeakerPhotoUrl { get; set; }
+  public Guid IdSpeaker { get; set; }
   
   public Room? Room { get; set; }
+  public Speaker? Speaker { get; set; }
 }

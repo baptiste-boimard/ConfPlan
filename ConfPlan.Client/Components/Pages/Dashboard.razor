@@ -45,14 +45,14 @@
             <td>@conf.Day</td>
             <td>@conf.TimeSlot</td>
             <td>@conf.Room</td>
-            <td>@conf.Room.MaxCapacity / @conf.Room.CurrentCapacity</td>
+            <td>@conf.Room.CurrentCapacity / @conf.Room.MaxCapacity</td>
             <td>@conf.Title</td>
             <td>@conf.Description</td>
-            <td>@conf.SpeakerName</td>
+            <td>@conf.Speaker.Name</td>
             <td>
-                <img src="@conf.SpeakerPhotoUrl" alt="Photo" />
+                <img src="@conf.Speaker.PhotoUrl" alt="Photo" />
             </td>
-            <td>@conf.SpeakerBio</td>
+            <td>@conf.Speaker.Bio</td>
             <td>
                 @* <button @onclick="() => Subscription(conf)">✏️</button> *@
             </td>

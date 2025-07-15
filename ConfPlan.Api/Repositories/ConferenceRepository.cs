@@ -20,14 +20,24 @@ public class ConferenceRepository : IConferenceRepository
   {
     var conferences = await _context.Conferences
       .Include(c => c.Room)
+      .Include(c => c.Speaker)
       .ToListAsync();
     return conferences;
   }
+  
+  public async Task<List<Room>> GetAllRooms()
+  {
+    var rooms = await _context.Rooms
+      .OrderBy(c => c.Name)
+      .ToListAsync();
+    return rooms;
+  } 
   
   public async Task<Conference> GetConferenceById(Guid id)
   {
     var conference = await _context.Conferences
       .Include(c => c.Room)
+      .Include(c => c.Speaker)
       .FirstOrDefaultAsync(c => c.Id == id);
 
     if (conference != null) return conference;
@@ -39,7 +49,10 @@ public class ConferenceRepository : IConferenceRepository
   { 
     var existingConferenceAtSameDate = await _context.Conferences
       .Include(c => c.Room)
-      .FirstOrDefaultAsync(c => c.Day == conf.Day && c.TimeSlot == conf.TimeSlot);
+      .Include(c => c.Speaker)
+      .FirstOrDefaultAsync(c => c.Day == conf.Day &&
+        c.TimeSlot == conf.TimeSlot &&
+        c.IdRoom == conf.IdRoom);
 
     if (existingConferenceAtSameDate != null) return existingConferenceAtSameDate;
 

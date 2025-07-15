@@ -11,14 +11,12 @@ namespace ConfPlan.Api.Controllers;
 public class ConferenceController : ControllerBase
 {
   private readonly IConferenceRepository _conferenceRepository;
-  private readonly PostgresDbContext _context;
 
   public ConferenceController(
     IConferenceRepository conferenceRepository,
     PostgresDbContext context)
   {
     _conferenceRepository = conferenceRepository;
-    _context = context;
   }
 
   [HttpGet("getall")]
@@ -29,13 +27,21 @@ public class ConferenceController : ControllerBase
     return Ok(conferences);
   }
 
+  [HttpGet("getallRooms")]
+  public async Task<IActionResult> GetAllRooms()
+  {
+    var rooms = await _conferenceRepository.GetAllRooms();
+
+    return Ok(rooms);
+  }
+
   [HttpPost ("create")]
   public async Task<IActionResult> Create([FromBody] Conference conf)
   {
     if (string.IsNullOrWhiteSpace(conf.Day) || string.IsNullOrWhiteSpace(conf.TimeSlot))
-      return BadRequest("Champs requis");
+      return BadRequest( new { message = "Champs requis" });
     
-    // Vérifier si une conference existe déjà sur les meme creanaux
+    // Vérifier si une conference existe déjà sur les meme creaneaux et la meme salle
     var existingConferenceAtSameDate= await _conferenceRepository.GetConferenceByDayAndTimeSlot(conf);
 
     if (existingConferenceAtSameDate != null)
@@ -54,7 +60,13 @@ public class ConferenceController : ControllerBase
   [HttpPost("update")]
   public async Task<IActionResult> Update([FromBody] Conference updated)
   {
-    var conf = await _context.Conferences.FindAsync(updated.Id);
+    // Vérifier si une conference existe déjà sur les meme creaneaux et la meme salle
+    var existingConferenceAtSameDate= await _conferenceRepository.GetConferenceByDayAndTimeSlot(updated);
+    
+    if(existingConferenceAtSameDate != null)
+      return Conflict(new { message = "Ce créneau ou cette salle sont déjà réservés" });
+    
+    var conf = await _conferenceRepository.GetConferenceById(updated.Id);
     
     if (conf == null) return NotFound( new { message = "La conférence n'existe pas." });
 
@@ -63,9 +75,7 @@ public class ConferenceController : ControllerBase
     conf.Title = updated.Title;
     conf.Room = updated.Room;
     conf.Description = updated.Description;
-    conf.SpeakerName = updated.SpeakerName;
-    conf.SpeakerBio = updated.SpeakerBio;
-    conf.SpeakerPhotoUrl = updated.SpeakerPhotoUrl;
+    conf.Speaker = updated.Speaker;
 
     var updatingConference = await _conferenceRepository.UpdateConference(conf);
     
@@ -78,7 +88,7 @@ public class ConferenceController : ControllerBase
   [HttpPost("delete")]
   public async Task<IActionResult> Delete([FromBody] Conference conf)
   {
-    var existingConf = await _context.Conferences.FindAsync(conf.Id);
+    var existingConf = await _conferenceRepository.GetConferenceById(conf.Id);
     
     if (conf == null) return NotFound( new { message = "La conférence n'existe pas." });
     

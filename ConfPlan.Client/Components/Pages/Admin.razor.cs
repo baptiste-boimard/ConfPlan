@@ -10,11 +10,11 @@ public partial class Admin : ComponentBase
   [Inject] private NavigationManager _navigationManager { get; set; }
   [Inject] private UserState _userState { get; set; }
   [Inject] private ConferenceState _conferenceState { get; set; }
+  [Inject] private SpeakerState _speakerState { get; set; }
   
   private bool isLoaded = false;
   Conference? editingConference = null;
   bool isEditing => editingConference != null;
-  // private bool isEditing = false;
   private List<Conference> conferences = new();
   private Conference currentConference = new();
   
@@ -24,14 +24,10 @@ public partial class Admin : ComponentBase
     "9h30 - 10h", "10h - 10h30", "10h30 - 11h", "11h - 12h",
     "13h - 13h30", "13h30 - 14h", "14h30 - 15h", "15h - 16h",
     "16h - 17h", "17h - 18h"
-  }; 
-  
-  private List<string> rooms = new()
-  {
-    "Salle A", "Salle B", "Salle C", "Salle D",
-    "Salle E", "Salle F", "Salle G", "Salle H",
-    "Salle I", "Salle J"
   };
+
+  private List<Room> rooms = new();
+  private List<Speaker> speakers = new();
   
   private string? errorMessage;
 
@@ -39,6 +35,8 @@ public partial class Admin : ComponentBase
   protected override async Task OnInitializedAsync()
   {
     await LoadConferences();
+    await LoadRooms();
+    await LoadSpeakers();
     isLoaded = true;
   }
   
@@ -69,6 +67,36 @@ public partial class Admin : ComponentBase
       StateHasChanged();
     }
   }
+  
+  private async Task LoadRooms()
+  {
+    var result = await _conferenceState.GetAllRoomsAsync();
+    
+    if (!result.Success)
+    {
+      errorMessage = result.Message ?? "Une erreur s'est produite lors du chargement des salles.";
+    }
+    else
+    {
+      rooms = result.Rooms;
+      StateHasChanged();
+    }
+  }
+  
+  private async Task LoadSpeakers()
+  {
+    var result = await _speakerState.GettAllSpeakersAsync();
+    
+    if (!result.Success)
+    {
+      errorMessage = result.Message ?? "Une erreur s'est produite lors du chargement des conférenciés.";
+    }
+    else
+    {
+      speakers = result.Speakers;
+      StateHasChanged();
+    }
+  }
 
   private void EditConference(Conference conf)
   {
@@ -77,11 +105,10 @@ public partial class Admin : ComponentBase
       Id = conf.Id,
       Day = conf.Day,
       TimeSlot = conf.TimeSlot,
+      Room = conf.Room,
       Title = conf.Title,
       Description = conf.Description,
-      SpeakerName = conf.SpeakerName,
-      SpeakerBio = conf.SpeakerBio,
-      SpeakerPhotoUrl = conf.SpeakerPhotoUrl
+      Speaker = conf.Speaker,
     };
   }
 

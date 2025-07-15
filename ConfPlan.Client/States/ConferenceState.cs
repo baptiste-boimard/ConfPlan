@@ -39,6 +39,31 @@ public class ConferenceState
     }
   }
 
+  public async Task<RoomResult> GetAllRoomsAsync()
+  {
+    var response = await _httpClient.GetAsync($"{_config["Url:ApiGateway"]}/api/conferences/getallRooms");
+
+    if (response.IsSuccessStatusCode)
+    {
+      var rooms = await response.Content.ReadFromJsonAsync<List<Room>>();
+      return new RoomResult()
+      {
+        Success = true,
+        Rooms = rooms ?? new List<Room>()
+      };
+    }
+    else
+    {
+      var errorResponse = await response.Content.ReadAsStringAsync();
+      var errorText = JsonSerializer.Deserialize<Dictionary<string, string>>(errorResponse);
+      return new RoomResult
+      {
+        Success = false,
+        Message = errorText?["message"] ?? "Problème au niveau de la récupération des salles."
+      };
+    }
+  }
+
   public async Task<ConferenceResult> CreateAsync(Conference conf)
   {
     

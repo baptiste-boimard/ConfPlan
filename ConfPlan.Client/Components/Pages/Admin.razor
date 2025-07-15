@@ -35,14 +35,14 @@ else
                 <td>@conf.Day</td>
                 <td>@conf.TimeSlot</td>
                 <td>@conf.Room</td>
-                <td>@conf.Room.MaxCapacity / @conf.Room.CurrentCapacity</td>
+                <td>@conf.Room.CurrentCapacity / @conf.Room.MaxCapacity</td>
                 <td>@conf.Title</td>
                 <td>@conf.Description</td>
-                <td>@conf.SpeakerName</td>
+                <td>@conf.Speaker.Name</td>
                 <td>
-                    <img src="@conf.SpeakerPhotoUrl" alt="Photo" />
+                    <img src="@conf.Speaker.PhotoUrl" alt="Photo" />
                 </td>
-                <td>@conf.SpeakerBio</td>
+                <td>@conf.Speaker.Bio</td>
                 <td>
                     <button @onclick="() => EditConference(conf)">✏️</button>
                     <button @onclick="() => DeleteConference(conf)">🗑️</button>
@@ -93,11 +93,11 @@ else
 
             <div>
                 <label>Salle :</label>
-                <select @bind="newConference.Room">
-                    @foreach (var slot in rooms)
+                <select @bind="newConference.IdRoom">
+                    <option value="">-- Choisir une salle --</option>
+                    @foreach (var room in rooms)
                     {
-                        <option>@slot</option>
-                    }
+                        <option value="@room.Id">@room.Name</option>                    }
                 </select>
             </div>
 
@@ -112,19 +112,24 @@ else
             </div>
 
             <div>
-                <label>Conférencier - Nom :</label>
-                <InputText @bind-Value="newConference.SpeakerName"/>
+                <label>Conférencier :</label>
+                <select @bind="newConference.IdSpeaker">
+                    <option value="">-- Choisir un conférencier --</option>
+                    @foreach (var speaker in speakers)
+                    {
+                        <option value="@speaker.Id">@speaker.Name</option>                    }
+                </select>
             </div>
 
-            <div>
-                <label>Conférencier - Biographie :</label>
-                <InputTextArea @bind-Value="newConference.SpeakerBio"/>
-            </div>
-
-            <div>
-                <label>Conférencier - Photo (URL) :</label>
-                <InputText @bind-Value="newConference.SpeakerPhotoUrl"/>
-            </div>
+            @* <div> *@
+            @*     <label>Conférencier - Biographie :</label> *@
+            @*     <InputTextArea @bind-Value="newConference.Speaker.Bio"/> *@
+            @* </div> *@
+            @* *@
+            @* <div> *@
+            @*     <label>Conférencier - Photo (URL) :</label> *@
+            @*     <InputText @bind-Value="newConference.Speaker.PhotoUrl"/> *@
+            @* </div> *@
 
             <button type="submit">Ajouter Conférence</button>
         </EditForm>
@@ -159,11 +164,15 @@ else
 
             <div>
                 <label>Salle :</label>
-                <select @bind="newConference.Room">
-                    @foreach (var slot in rooms)
+                <select @bind="newConference.IdRoom">
+                    <option value="">-- Choisir une salle --</option>
+                    @if(speakers.Count == 0)
                     {
-                        <option>@slot</option>
+                        <option value="">Aucun conférencier disponible</option>
                     }
+                    @foreach (var room in rooms)
+                    {
+                        <option value="@room.Id">@room.Name</option>                    }
                 </select>
             </div>
 
@@ -178,19 +187,33 @@ else
             </div>
 
             <div>
-                <label>Conférencier - Nom :</label>
-                <InputText @bind-Value="editingConference.SpeakerName" />
+                <label>Salle :</label>
+                <select @bind="newConference.IdSpeaker">
+                    <option value="">-- Choisir une salle --</option>
+                    @if(speakers.Count == 0)
+                    {
+                        <option value="">Aucun conférencier disponible</option>
+                    }
+                    @foreach (var room in rooms)
+                    {
+                        <option value="@room.Id">@room.Name</option>                    }
+                </select>
             </div>
-
-            <div>
-                <label>Conférencier - Biographie :</label>
-                <InputTextArea @bind-Value="editingConference.SpeakerBio" />
-            </div>
-
-            <div>
-                <label>Conférencier - Photo (URL) :</label>
-                <InputText @bind-Value="editingConference.SpeakerPhotoUrl" />
-            </div>
+            
+            @* <div> *@
+            @*     <label>Conférencier - Nom :</label> *@
+            @*     <InputText @bind-Value="editingConference.Speaker.Name" /> *@
+            @* </div> *@
+            @* *@
+            @* <div> *@
+            @*     <label>Conférencier - Biographie :</label> *@
+            @*     <InputTextArea @bind-Value="editingConference.Speaker.Bio" /> *@
+            @* </div> *@
+            @* *@
+            @* <div> *@
+            @*     <label>Conférencier - Photo (URL) :</label> *@
+            @*     <InputText @bind-Value="editingConference.Speaker.PhotoUrl" /> *@
+            @* </div> *@
 
             <button type="submit">Mettre à jour</button>
             <button type="button" @onclick="() => editingConference = null" style="margin-left: 10px;">Annuler</button>

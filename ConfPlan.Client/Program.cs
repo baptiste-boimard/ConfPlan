@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<UserState>();
 builder.Services.AddScoped<ConferenceState>();
+builder.Services.AddScoped<SpeakerState>();
 
 
 builder.Services.AddRazorComponents()

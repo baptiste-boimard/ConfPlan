@@ -10,5 +10,5 @@ public class Room
   public int CurrentCapacity { get; set; }
   
   [JsonIgnore]
-  public Conference Conference{ get; set; }
+  public Conference? Conference{ get; set; }
 }

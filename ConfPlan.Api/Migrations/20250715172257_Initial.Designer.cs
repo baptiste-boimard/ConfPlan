@@ -12,7 +12,7 @@ using Service.OAuth.Database;
 namespace ConfPlan.Api.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20250715170004_Initial")]
+    [Migration("20250715172257_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -87,17 +87,17 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("20f8b649-959e-4a98-8532-639be6b77906"),
+                            Id = new Guid("75115e60-39ed-43de-ab04-b0de37753703"),
                             RoleName = "Visiteur"
                         },
                         new
                         {
-                            Id = new Guid("24dce4b5-374b-4ae8-9fb9-9152c71eaf09"),
+                            Id = new Guid("bcc28637-ab86-4d36-a872-4cefebbc9691"),
                             RoleName = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("dd4e96ad-7f34-4261-9ac9-6fcb54520257"),
+                            Id = new Guid("ed3f8988-a5cf-4e5e-925e-238dc90ec0eb"),
                             RoleName = "Sponsor"
                         });
                 });
@@ -120,7 +120,79 @@ namespace ConfPlan.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Room");
+                    b.ToTable("Rooms");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("02ad0587-9a12-40f9-950e-cfbf9fca42ef"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 20,
+                            Name = "Salle A"
+                        },
+                        new
+                        {
+                            Id = new Guid("7677d878-0bb4-4606-a641-80b29877ff95"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 20,
+                            Name = "Salle B"
+                        },
+                        new
+                        {
+                            Id = new Guid("60ca597c-72d0-4454-bc69-1df6c1e0242a"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 10,
+                            Name = "Salle C"
+                        },
+                        new
+                        {
+                            Id = new Guid("3953e1fd-af4d-4b97-8ab3-f64fea2eae04"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 10,
+                            Name = "Salle D"
+                        },
+                        new
+                        {
+                            Id = new Guid("7bf76c10-5763-4935-9607-52c67982579a"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 5,
+                            Name = "Salle E"
+                        },
+                        new
+                        {
+                            Id = new Guid("9ac9f4c2-893a-45e6-84a1-80249ed16d9a"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 5,
+                            Name = "Salle F"
+                        },
+                        new
+                        {
+                            Id = new Guid("96625fba-b7cf-4a3f-bf6e-07aa490370c4"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 50,
+                            Name = "Salle G"
+                        },
+                        new
+                        {
+                            Id = new Guid("51211ce8-67e9-496b-9add-2e4875c7962a"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 50,
+                            Name = "Salle H"
+                        },
+                        new
+                        {
+                            Id = new Guid("d3ef5b18-5934-4567-88b9-2407537025a1"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 100,
+                            Name = "Salle I"
+                        },
+                        new
+                        {
+                            Id = new Guid("70e5043b-3ed4-4fd5-8473-86bd407170c0"),
+                            CurrentCapacity = 0,
+                            MaxCapacity = 100,
+                            Name = "Salle J"
+                        });
                 });
 
             modelBuilder.Entity("ConfPlan.Shared.User", b =>
@@ -149,9 +221,9 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f28f4692-b7d7-41a3-9ee1-8c241f628fa0"),
+                            Id = new Guid("f89c3a97-e6b1-4f51-a674-c3cf1862ad7c"),
                             Email = "admin@confplan.dev",
-                            IdRole = new Guid("24dce4b5-374b-4ae8-9fb9-9152c71eaf09"),
+                            IdRole = new Guid("bcc28637-ab86-4d36-a872-4cefebbc9691"),
                             Password = "$2a$12$ytsbB3JQWKgtrDjAFVJm3eASfxMqBqE8JlYDXBzkPbwt28oFP9unq"
                         });
                 });
@@ -185,8 +257,7 @@ namespace ConfPlan.Api.Migrations
 
             modelBuilder.Entity("ConfPlan.Shared.Room", b =>
                 {
-                    b.Navigation("Conference")
-                        .IsRequired();
+                    b.Navigation("Conference");
                 });
 #pragma warning restore 612, 618
         }

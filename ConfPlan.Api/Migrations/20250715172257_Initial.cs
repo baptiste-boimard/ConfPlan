@@ -26,7 +26,7 @@ namespace ConfPlan.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Room",
+                name: "Rooms",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -36,7 +36,7 @@ namespace ConfPlan.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Room", x => x.Id);
+                    table.PrimaryKey("PK_Rooms", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,9 +77,9 @@ namespace ConfPlan.Api.Migrations
                 {
                     table.PrimaryKey("PK_Conferences", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Conferences_Room_IdRoom",
+                        name: "FK_Conferences_Rooms_IdRoom",
                         column: x => x.IdRoom,
-                        principalTable: "Room",
+                        principalTable: "Rooms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -89,15 +89,32 @@ namespace ConfPlan.Api.Migrations
                 columns: new[] { "Id", "RoleName" },
                 values: new object[,]
                 {
-                    { new Guid("20f8b649-959e-4a98-8532-639be6b77906"), "Visiteur" },
-                    { new Guid("24dce4b5-374b-4ae8-9fb9-9152c71eaf09"), "Admin" },
-                    { new Guid("dd4e96ad-7f34-4261-9ac9-6fcb54520257"), "Sponsor" }
+                    { new Guid("75115e60-39ed-43de-ab04-b0de37753703"), "Visiteur" },
+                    { new Guid("bcc28637-ab86-4d36-a872-4cefebbc9691"), "Admin" },
+                    { new Guid("ed3f8988-a5cf-4e5e-925e-238dc90ec0eb"), "Sponsor" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Rooms",
+                columns: new[] { "Id", "CurrentCapacity", "MaxCapacity", "Name" },
+                values: new object[,]
+                {
+                    { new Guid("02ad0587-9a12-40f9-950e-cfbf9fca42ef"), 0, 20, "Salle A" },
+                    { new Guid("3953e1fd-af4d-4b97-8ab3-f64fea2eae04"), 0, 10, "Salle D" },
+                    { new Guid("51211ce8-67e9-496b-9add-2e4875c7962a"), 0, 50, "Salle H" },
+                    { new Guid("60ca597c-72d0-4454-bc69-1df6c1e0242a"), 0, 10, "Salle C" },
+                    { new Guid("70e5043b-3ed4-4fd5-8473-86bd407170c0"), 0, 100, "Salle J" },
+                    { new Guid("7677d878-0bb4-4606-a641-80b29877ff95"), 0, 20, "Salle B" },
+                    { new Guid("7bf76c10-5763-4935-9607-52c67982579a"), 0, 5, "Salle E" },
+                    { new Guid("96625fba-b7cf-4a3f-bf6e-07aa490370c4"), 0, 50, "Salle G" },
+                    { new Guid("9ac9f4c2-893a-45e6-84a1-80249ed16d9a"), 0, 5, "Salle F" },
+                    { new Guid("d3ef5b18-5934-4567-88b9-2407537025a1"), 0, 100, "Salle I" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "IdRole", "Password" },
-                values: new object[] { new Guid("f28f4692-b7d7-41a3-9ee1-8c241f628fa0"), "admin@confplan.dev", new Guid("24dce4b5-374b-4ae8-9fb9-9152c71eaf09"), "$2a$12$ytsbB3JQWKgtrDjAFVJm3eASfxMqBqE8JlYDXBzkPbwt28oFP9unq" });
+                values: new object[] { new Guid("f89c3a97-e6b1-4f51-a674-c3cf1862ad7c"), "admin@confplan.dev", new Guid("bcc28637-ab86-4d36-a872-4cefebbc9691"), "$2a$12$ytsbB3JQWKgtrDjAFVJm3eASfxMqBqE8JlYDXBzkPbwt28oFP9unq" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Conferences_IdRoom",
@@ -121,7 +138,7 @@ namespace ConfPlan.Api.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Room");
+                name: "Rooms");
 
             migrationBuilder.DropTable(
                 name: "Roles");
