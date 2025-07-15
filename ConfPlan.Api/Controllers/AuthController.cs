@@ -47,11 +47,29 @@ public class AuthController : ControllerBase
       IdRole = defaultRole.Id
     };
   
-    var resultUser = _authRepository.RegisterUser(newUser);
+    var resultUser = await _authRepository.RegisterUser(newUser);
     
     if(resultUser == null)
       return StatusCode(500, "Erreur lors de l'enregistrement de l'utilisateur");
 
     return Ok(resultUser);
   }
+  
+  [HttpPost("login")]
+  public async Task<IActionResult> Login([FromBody] User credentials)
+  {
+    if (string.IsNullOrWhiteSpace(credentials.Email) || string.IsNullOrWhiteSpace(credentials.Password))
+      return BadRequest(new { message = "Champs requis" });
+
+    var existingUser = await _authRepository.GetOneUserByEmail(credentials);
+    if (existingUser == null)
+      return Unauthorized(new { message = "Utilisateur introuvable" });
+
+    var isValid = _passwordHasher.VerifyPassword(credentials.Password, existingUser.Password);
+    if (!isValid)
+      return Unauthorized(new { message = "Mot de passe incorrect" });
+
+    return Ok(existingUser);
+  }
+
 }

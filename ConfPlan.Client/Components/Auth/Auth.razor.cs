@@ -27,7 +27,6 @@ public partial class Auth : ComponentBase
     {
       if (formModel.Password != formModel.ConfirmPassword)
       {
-        // erreur basique
         errorMessage = ("Les mots de passe ne correspondent pas.");
         return;
       }
@@ -48,12 +47,17 @@ public partial class Auth : ComponentBase
     }
     else
     {
-      // TODO: Ajouter la logique de connexion
-      errorMessage = ($"Connexion de : {formModel.Email}");
-    }
+      var result = await _userState.LoginAsync(formModel.Email, formModel.Password);
 
-    // Rediriger vers le dashboard
-    _navigationManager.NavigateTo("/dashboard");
+      if (!result.Success)
+      {
+        errorMessage = result.Message ?? "Erreur de connexion.";
+        return;
+      }
+
+      // Rediriger vers le dashboard
+      _navigationManager.NavigateTo("/dashboard");
+    }
   }
 
   private void ToggleMode()

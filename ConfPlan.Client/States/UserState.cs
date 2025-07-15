@@ -16,7 +16,7 @@ public class UserState
     _configuration = configuration;
   }
 
-  public async Task<RegisterResult> RegisterAsync(string email, string password)
+  public async Task<AuthResult> RegisterAsync(string email, string password)
   {
     var payload = new User
     {
@@ -25,41 +25,57 @@ public class UserState
       IdRole = Guid.Empty
     };
 
-    try
+   
+    var response = await _httpClient.PostAsJsonAsync($"{_configuration["Url:ApiGateway"]}/api/auth/register", payload);
+  
+    if (response.IsSuccessStatusCode)
     {
-      var response = await _httpClient.PostAsJsonAsync($"{_configuration["Url:ApiGateway"]}/api/auth/register", payload);
-    
-      if (response.IsSuccessStatusCode)
+      var user = await response.Content.ReadFromJsonAsync<User>();
+      return new AuthResult
       {
-        var user = await response.Content.ReadFromJsonAsync<User>();
-        return new RegisterResult
-        {
-          Success = true,
-          User = user
-        };
-      }
-      else
-      {
-        var errorResponse = await response.Content.ReadAsStringAsync();
-        var errorText = JsonSerializer.Deserialize<Dictionary<string, string>>(errorResponse);
-        return new RegisterResult
-        {
-          Success = false,
-          Message = errorText?["message"] ?? "Une erreur s'est produite lors de l'enregistrement."
-        };
-      }
-
-
+        Success = true,
+        User = user
+      };
     }
-    catch (Exception e)
+    else
     {
-      return new RegisterResult
+      var errorResponse = await response.Content.ReadAsStringAsync();
+      var errorText = JsonSerializer.Deserialize<Dictionary<string, string>>(errorResponse);
+      return new AuthResult
       {
         Success = false,
-        Message = $"Exception client : {e.Message}"
+        Message = errorText?["message"] ?? "Une erreur s'est produite lors de l'enregistrement."
+      };
+    }
+  }
+  
+  public async Task<AuthResult> LoginAsync(string email, string password)
+  {
+    var payload = new
+    {
+      Email = email,
+      Password = password
+    };
+    
+    var response = await _httpClient.PostAsJsonAsync(
+      $"{_configuration["Url:ApiGateway"]}/api/auth/login", payload);
+
+    if (response.IsSuccessStatusCode)
+    {
+      var user = await response.Content.ReadFromJsonAsync<User>();
+      return new AuthResult
+      {
+        Success = true,
+        User = user
       };
     }
 
-    
+    var errorResponse = await response.Content.ReadAsStringAsync();
+    var errorText = JsonSerializer.Deserialize<Dictionary<string, string>>(errorResponse);
+    return new AuthResult
+    {
+      Success = false,
+      Message = errorText?["message"] ?? "Email ou mot de passe incorrect."
+    };
   }
 }
