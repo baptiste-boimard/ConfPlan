@@ -1,13 +1,29 @@
+using Microsoft.EntityFrameworkCore;
+using Service.OAuth.Database;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
 
+//* Gestion des cors
+builder.Services.AddCors(options =>
+{
+  options.AddPolicy("AllowAll", policy =>
+  {
+    policy.AllowAnyOrigin()
+      .AllowAnyMethod()
+      .AllowAnyHeader();
+  });
+});
+
+//* Configuration du DbContext
+builder.Services.AddDbContext<PostgresDbContext>(options =>
+  options.UseNpgsql(builder.Configuration["ConnectionStrings:PostgresDBContext"]));
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
