@@ -17,6 +17,7 @@ public class AuthRepository : IAuthRepository
   public async Task<User> GetOneUserByEmail(User user)
   {
     var existingUser = await _context.Users
+      .Include(u => u.Role)
       .FirstOrDefaultAsync(u => u.Email == user.Email);
 
     if (existingUser != null) return existingUser;

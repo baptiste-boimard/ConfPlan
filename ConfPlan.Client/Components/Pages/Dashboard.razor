@@ -2,6 +2,21 @@
 
 <h3>Dashboard</h3>
 
-@code {
-    
+<button @onclick="HandleLogout">Se déconnecter</button>
+
+@if (_userState.CurrentUser is not null)
+{
+    <p>Connecté en tant que : @_userState.CurrentUser.Email (@_userState.CurrentUser.Role?.RoleName)</p>
+}
+else
+{
+    <p>Non connecté</p>
+}
+
+@if (_userState.CurrentUser?.Role?.RoleName == "Admin")
+{
+    <button @onclick="GoToAdmin">
+        Espace Administrateur
+    Espace Organisateur
+    </button>
 }

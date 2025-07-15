@@ -21,6 +21,14 @@ public partial class Auth : ComponentBase
   private bool isRegisterMode = false;
   private string? errorMessage;
 
+  protected override void OnInitialized()
+  {
+    if (_userState.CurrentUser != null)
+    {
+      _navigationManager.NavigateTo("/dashboard");
+    }
+  }
+  
   private async Task HandleSubmit()
   {
     if (isRegisterMode)

@@ -44,7 +44,8 @@ public class AuthController : ControllerBase
       Id = Guid.NewGuid(),
       Email = user.Email,
       Password = hashedPassword,
-      IdRole = defaultRole.Id
+      IdRole = defaultRole.Id,
+      Role = defaultRole
     };
   
     var resultUser = await _authRepository.RegisterUser(newUser);

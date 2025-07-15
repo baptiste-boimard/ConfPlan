@@ -1,0 +1,16 @@
+﻿@page "/admin"
+<h3>Admin</h3>
+
+@if (_userState.CurrentUser == null)
+{
+    <p>Redirection vers /auth...</p>
+}
+else if (_userState.CurrentUser?.Role?.RoleName != "Admin")
+{
+    <p>Accès refusé.</p>
+}
+else
+{
+    <h1>Dashboard Organisateur</h1>
+    <!-- Tu mettras ici les actions : Ajouter/modifier/supprimer conférence -->
+}

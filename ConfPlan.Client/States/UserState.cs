@@ -16,6 +16,18 @@ public class UserState
     _configuration = configuration;
   }
 
+  public User? CurrentUser { get; private set; }
+  
+  public void SetUser(User user)
+  {
+    CurrentUser = user;
+  }
+
+  public void Logout()
+  {
+    CurrentUser = null;
+  }
+
   public async Task<AuthResult> RegisterAsync(string email, string password)
   {
     var payload = new User
@@ -31,6 +43,7 @@ public class UserState
     if (response.IsSuccessStatusCode)
     {
       var user = await response.Content.ReadFromJsonAsync<User>();
+      SetUser(user);
       return new AuthResult
       {
         Success = true,
@@ -63,6 +76,7 @@ public class UserState
     if (response.IsSuccessStatusCode)
     {
       var user = await response.Content.ReadFromJsonAsync<User>();
+      SetUser(user);
       return new AuthResult
       {
         Success = true,
