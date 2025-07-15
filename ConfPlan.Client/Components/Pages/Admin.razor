@@ -121,16 +121,6 @@ else
                 </select>
             </div>
 
-            @* <div> *@
-            @*     <label>Conférencier - Biographie :</label> *@
-            @*     <InputTextArea @bind-Value="newConference.Speaker.Bio"/> *@
-            @* </div> *@
-            @* *@
-            @* <div> *@
-            @*     <label>Conférencier - Photo (URL) :</label> *@
-            @*     <InputText @bind-Value="newConference.Speaker.PhotoUrl"/> *@
-            @* </div> *@
-
             <button type="submit">Ajouter Conférence</button>
         </EditForm>
     }
@@ -199,26 +189,90 @@ else
                         <option value="@room.Id">@room.Name</option>                    }
                 </select>
             </div>
-            
-            @* <div> *@
-            @*     <label>Conférencier - Nom :</label> *@
-            @*     <InputText @bind-Value="editingConference.Speaker.Name" /> *@
-            @* </div> *@
-            @* *@
-            @* <div> *@
-            @*     <label>Conférencier - Biographie :</label> *@
-            @*     <InputTextArea @bind-Value="editingConference.Speaker.Bio" /> *@
-            @* </div> *@
-            @* *@
-            @* <div> *@
-            @*     <label>Conférencier - Photo (URL) :</label> *@
-            @*     <InputText @bind-Value="editingConference.Speaker.PhotoUrl" /> *@
-            @* </div> *@
 
             <button type="submit">Mettre à jour</button>
             <button type="button" @onclick="() => editingConference = null" style="margin-left: 10px;">Annuler</button>
         </EditForm>
     }
+    
+    <h4>Ajouter un nouveau conférencier</h4>
+      
+    @if (!isEditingSpeaker)
+    {
+        <EditForm Model="@newSpeaker" OnValidSubmit="HandleAddSpeaker">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+
+            <div>
+                <label>Nom :</label>
+                <InputText @bind-Value="newSpeaker.Name"/>
+            </div>
+
+            <div>
+                <label>Bio :</label>
+                <InputTextArea @bind-Value="newSpeaker.Bio"/>
+            </div>
+
+            <div>
+                <label>Url Photo :</label>
+                <InputTextArea @bind-Value="newSpeaker.PhotoUrl"/>
+            </div>
+
+            <button type="submit">Ajouter Conférencier</button>
+        </EditForm>
+    }
+    if(isEditingSpeaker && selectSpeaker != null)
+    {
+        <EditForm Model="@selectSpeaker" OnValidSubmit="HandleUpdateSpeaker">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+
+            <div>
+                <label>Nom :</label>
+                <InputText @bind-Value="editingSpeaker.Name" />
+            </div>
+
+            <div>
+                <label>Bio :</label>
+                <InputTextArea @bind-Value="editingSpeaker.Bio"/>
+            </div>
+
+            <div>
+                <label>Url Photo :</label>
+                <InputTextArea @bind-Value="editingSpeaker.PhotoUrl"/>
+            </div>
+
+            <button type="submit">Modifier Conférencier</button>
+        </EditForm>
+    }
+    
+    <br/>
+    <hr/>
+    <br/>
+    
+    <h4>Gérer les conférenciers</h4>
+    
+    <EditForm Model="@selectSpeaker">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        
+        <label>Nom :</label>
+        <select @bind="selectedSpeakerId">
+            <option value="">-- Choisir un conférencier --</option>
+            @if(speakers.Count == 0)
+            {
+                <option value="">Aucun conférencier disponible</option>
+            }
+            @foreach (var speak in speakers)
+            {
+                <option value="@speak.Id">@speak.Name</option>                    }
+        </select>
+
+        <button type="button" @onclick="HandleEditSpeaker" style="margin-left: 10px;">Modifier</button>
+        <button type="button" @onclick="HandleDeleteSpeaker" style="margin-left: 10px;">Supprimer</button>
+    </EditForm>
+    
+    <p>@selectSpeaker?.Name</p>
 
 
     
