@@ -1,0 +1,38 @@
+﻿<h3>@(isRegisterMode ? "Inscription" : "Connexion")</h3>
+
+<EditForm Model="@formModel" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Email</label><br />
+        <InputText @bind-Value="formModel.Email" />
+    </div>
+
+    <div>
+        <label>Mot de passe</label><br />
+        <InputText InputType="password" @bind-Value="formModel.Password" />
+    </div>
+
+    @if (isRegisterMode)
+    {
+        <div>
+            <label>Confirmer le mot de passe</label><br />
+            <InputText InputType="password" @bind-Value="formModel.ConfirmPassword" />
+        </div>
+    }
+
+    <br />
+    <button type="submit"> @(isRegisterMode ? "S'inscrire" : "Se connecter")</button>
+
+    <p>
+        @if (isRegisterMode)
+        {
+            <span>Déjà inscrit ? <a href="#" @onclick="ToggleMode">Connexion</a></span>
+        }
+        else
+        {
+            <span>Nouveau ? <a href="#" @onclick="ToggleMode">Créer un compte</a></span>
+        }
+    </p>
+</EditForm>
