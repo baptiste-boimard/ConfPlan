@@ -1,4 +1,6 @@
-﻿<h3>@(isRegisterMode ? "Inscription" : "Connexion")</h3>
+﻿<h3 style="text-align:center; font-family:Arial; color:#333;">
+    @(isRegisterMode ? "Inscription" : "Connexion")
+</h3>
 
 <EditForm Model="@formModel" OnValidSubmit="@HandleSubmit">
     <DataAnnotationsValidator />
@@ -6,38 +8,54 @@
 
     @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="alert alert-danger">@errorMessage</div>
-    }
-
-    <div>
-        <label>Email</label><br />
-        <InputText @bind-Value="formModel.Email" />
-    </div>
-
-    <div>
-        <label>Mot de passe</label><br />
-        <InputText InputType="password" @bind-Value="formModel.Password" />
-    </div>
-
-    @if (isRegisterMode)
-    {
-        <div>
-            <label>Confirmer le mot de passe</label><br />
-            <InputText InputType="password" @bind-Value="formModel.ConfirmPassword" />
+        <div style="color: white; background-color: #dc3545; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+            @errorMessage
         </div>
     }
 
-    <br />
-    <button type="submit"> @(isRegisterMode ? "S'inscrire" : "Se connecter")</button>
+    <div style="max-width: 350px; margin: 0 auto; font-family: Arial;">
+        <div style="margin-bottom: 15px;">
+            <label>Email</label><br />
+            <InputText @bind-Value="formModel.Email" 
+                       style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" />
+        </div>
 
-    <p>
+        <div style="margin-bottom: 15px;">
+            <label>Mot de passe</label><br />
+            <InputText InputType="password" @bind-Value="formModel.Password"
+                       style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" />
+        </div>
+
         @if (isRegisterMode)
         {
-            <span>Déjà inscrit ? <a href="#" @onclick="ToggleMode">Connexion</a></span>
+            <div style="margin-bottom: 15px;">
+                <label>Confirmer le mot de passe</label><br />
+                <InputText InputType="password" @bind-Value="formModel.ConfirmPassword"
+                           style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" />
+            </div>
         }
-        else
-        {
-            <span>Nouveau ? <a href="#" @onclick="ToggleMode">Créer un compte</a></span>
-        }
-    </p>
+
+        <div style="text-align: center;">
+            <button type="submit"
+                    style="background-color: #007bff; color: white; padding: 10px 20px; border: none;
+                           border-radius: 4px; cursor: pointer;">
+                @(isRegisterMode ? "S'inscrire" : "Se connecter")
+            </button>
+        </div>
+
+        <p style="text-align:center; margin-top: 15px;">
+            @if (isRegisterMode)
+            {
+                <span>Déjà inscrit ?
+                    <a href="#" @onclick="ToggleMode" style="color: #007bff;">Connexion</a>
+                </span>
+            }
+            else
+            {
+                <span>Nouveau ?
+                    <a href="#" @onclick="ToggleMode" style="color: #007bff;">Créer un compte</a>
+                </span>
+            }
+        </p>
+    </div>
 </EditForm>

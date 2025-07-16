@@ -11,9 +11,9 @@ public class ConferenceRepository : IConferenceRepository
   private readonly PostgresDbContext _context;
 
   public ConferenceRepository(
-    PostgresDbContext _context)
+    PostgresDbContext context)
   {
-    this._context = _context;
+    this._context = context;
   }
 
   public async Task<List<Conference>> GetAllConferences()
@@ -32,6 +32,16 @@ public class ConferenceRepository : IConferenceRepository
       .ToListAsync();
     return rooms;
   } 
+  
+  public async Task<Room> GetOneRoomById(Guid id)
+  {
+    var room = await _context.Rooms
+      .FirstOrDefaultAsync(r => r.Id == id);
+
+    if (room != null) return room;
+
+    return null;
+  }
   
   public async Task<Conference> GetConferenceById(Guid id)
   {

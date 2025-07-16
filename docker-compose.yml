@@ -1,0 +1,57 @@
+﻿# docker-compose.yml
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: confplan
+      POSTGRES_PASSWORD: confplan
+      POSTGRES_DB: confplan
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # Le healthcheck s'assure que le service 'api' ne démarrera que lorsque
+    # la base de données sera prête à accepter les connexions.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U confplan -d confplan"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: ConfPlan.Api/Dockerfile
+    # 'depends_on' avec la condition 'service_healthy' utilise le healthcheck ci-dessus.
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # On utilise le nom du service 'postgres' comme hôte, pas 'localhost'.
+      ConnectionStrings__PostgresDBContext: "Host=postgres;Port=5432;Database=confplan;Username=confplan;Password=confplan"
+      # Il est bon de définir les URLs que Kestrel doit écouter.
+      ASPNETCORE_URLS: "http://+:8080"
+    ports:
+      # Le port externe 7176 est mappé sur le port interne 8080 défini dans ASPNETCORE_URLS.
+      - "7176:8080"
+
+  client:
+    build:
+      context: .
+      dockerfile: ConfPlan.Client/Dockerfile
+    depends_on:
+      - api
+    environment:
+      # L'URL de l'API pointe vers le service 'api' sur son port interne.
+      # Utiliser http pour la communication interne est plus simple.
+      Url__ApiGateway: "http://api:8080"
+    ports:
+      - "7279:8080" # En supposant que le client écoute aussi sur le port 8080
+
+volumes:
+  pgdata:
+    # driver: local est la valeur par défaut, mais il est bon d'être explicite.
+    driver: local

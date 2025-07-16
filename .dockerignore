@@ -1,0 +1,26 @@
+﻿# .dockerignore
+
+# Ignorer les répertoires de sortie de build et les fichiers générés localement.
+# C'est la cause la plus fréquente d'erreurs de build multi-plateformes.
+**/bin
+**/obj
+
+# Ignorer les fichiers spécifiques à l'IDE et à l'environnement de développement local.
+.vs
+.vscode
+*.user
+*.suo
+
+# Ignorer le cache des outils .NET locaux
+.config/dotnet-tools.json
+
+# Ignorer les fichiers de publication locaux
+**/Properties/PublishProfiles
+
+# Ignorer les journaux et les fichiers temporaires
+*.log
+*.tmp
+
+# Ignorer les répertoires de Git
+.git
+.gitignore

@@ -1,12 +1,11 @@
 ﻿@page "/admin"
 
-<h1>Dashboard Organisateur</h1>
+<div style="display: flex; flex-direction: row; gap: 2rem">
+    <h3 class="dashboard-title">Espace Admin</h3>
 
-<h3>Gestion des conférences</h3>
+    <button @onclick="GoToDashboard" class="btn btn-primary">Retour au Dashboard</button> 
+</div>
 
-<button @onclick="GoToDashboard">
-    Dashboard
-</button>
 
 @if (!isLoaded)
 {
@@ -14,9 +13,9 @@
 }
 else
 {
-    <hr/>
+    <hr />
 
-    <h4>Conférences existantes</h4>
+    <h4 class="section-title">Conférences existantes</h4>
     <table class="table-conferences">
         <thead>
         <tr>
@@ -43,9 +42,7 @@ else
                 <td>@conf.Title</td>
                 <td>@conf.Description</td>
                 <td>@conf.Speaker.Name</td>
-                <td>
-                    <img src="@conf.Speaker.PhotoUrl" alt="Photo" />
-                </td>
+                <td><img src="@conf.Speaker.PhotoUrl" alt="Photo" /></td>
                 <td>@conf.Speaker.Bio</td>
                 <td>
                     <button @onclick="() => EditConference(conf)">✏️</button>
@@ -55,234 +52,221 @@ else
         }
         </tbody>
     </table>
-    
-    <br/>
-    <hr/>
-    <br/>
+
+    <br />
+    <hr />
+    <br />
 
     @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="alert alert-danger">@errorMessage</div>
+        <div class="error-message">@errorMessage</div>
     }
+
+    <br />
     
-    <br/>
+    <div style="display: flex; flex-direction: row;width: 100%; align-items: flex-start; gap: 2rem;">
+        <div style="flex: 1">
+            @if (!isEditing)
+            {
+                <h4 class="section-title">Ajouter une nouvelle conférence</h4>
+                <EditForm class="form-container" Model="@newConference" OnValidSubmit="HandleAdd">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <label>Jour :</label>
+                    <select @bind="newConference.Day">
+                        <option value="">-- Choisir un jour --</option>
+                        <option value="Jour 1">Jour 1</option>
+                        <option value="Jour 2">Jour 2</option>
+                        <option value="Jour 3">Jour 3</option>
+                    </select>
+
+                    <label>Créneau horaire :</label>
+                    <select @bind="newConference.TimeSlot">
+                        @foreach (var slot in timeSlots)
+                        {
+                            <option>@slot</option>
+                        }
+                    </select>
+
+                    <label>Salle :</label>
+                    <select @bind="newConference.IdRoom">
+                        <option value="">-- Choisir une salle --</option>
+                        @foreach (var room in rooms)
+                        {
+                            <option value="@room.Id">@room.Name</option>
+                        }
+                    </select>
+
+                    <label>Titre :</label>
+                    <InputText @bind-Value="newConference.Title" />
+
+                    <label>Description :</label>
+                    <InputTextArea @bind-Value="newConference.Description" />
+
+                    <label>Conférencier :</label>
+                    <select @bind="newConference.IdSpeaker">
+                        <option value="">-- Choisir un conférencier --</option>
+                        @foreach (var speaker in speakers)
+                        {
+                            <option value="@speaker.Id">@speaker.Name</option>
+                        }
+                    </select>
+
+                    <button type="submit">Ajouter Conférence</button>
+                </EditForm>
+            }
+            else
+            {
+                <h4 class="section-title">Modifier la conférence</h4>
+                <EditForm class="form-container" Model="@editingConference" OnValidSubmit="HandleUpdate">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <label>Jour :</label>
+                    <select @bind="editingConference.Day">
+                        <option value="">-- Choisir un jour --</option>
+                        <option value="Jour 1">Jour 1</option>
+                        <option value="Jour 2">Jour 2</option>
+                        <option value="Jour 3">Jour 3</option>
+                    </select>
+
+                    <label>Créneau horaire :</label>
+                    <select @bind="editingConference.TimeSlot">
+                        @foreach (var slot in timeSlots)
+                        {
+                            <option>@slot</option>
+                        }
+                    </select>
+
+                    <label>Salle :</label>
+                    <select @bind="editingConference.IdRoom">
+                        <option value="">-- Choisir une salle --</option>
+                        @foreach (var room in rooms)
+                        {
+                            <option value="@room.Id">@room.Name</option>
+                        }
+                    </select>
+
+                    <label>Titre :</label>
+                    <InputText @bind-Value="editingConference.Title" />
+
+                    <label>Description :</label>
+                    <InputTextArea @bind-Value="editingConference.Description" />
+
+                    <label>Conférencier :</label>
+                    <select @bind="editingConference.IdSpeaker">
+                        <option value="">-- Choisir un conférencier --</option>
+                        @foreach (var speaker in speakers)
+                        {
+                            <option value="@speaker.Id">@speaker.Name</option>
+                        }
+                    </select>
+
+                    <button type="submit">Mettre à jour</button>
+                    <button type="button" @onclick="() => editingConference = null" style="margin-left: 10px;">Annuler</button>
+                </EditForm>
+            }
+        </div> 
+        <div style="flex: 1">
+            <h4 class="section-title">Ajouter un nouveau conférencier</h4>
+            @if (!isEditingSpeaker)
+            {
+                <EditForm class="form-container" Model="@newSpeaker" OnValidSubmit="HandleAddSpeaker">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <label>Nom :</label>
+                    <InputText @bind-Value="newSpeaker.Name" />
+
+                    <label>Bio :</label>
+                    <InputTextArea @bind-Value="newSpeaker.Bio" />
+
+                    <label>Url Photo :</label>
+                    <InputTextArea @bind-Value="newSpeaker.PhotoUrl" />
+
+                    <button type="submit">Ajouter Conférencier</button>
+                </EditForm>
+            }
+        </div>
+    </div>
     
-    @if (!isEditing)
-    {
-        <h4>Ajouter une nouvelle conférence</h4>
-        
-        <EditForm Model="@newConference" OnValidSubmit="HandleAdd">
-            <DataAnnotationsValidator/>
-            <ValidationSummary/>
-
-            <div>
-                <label>Jour :</label>
-                <select @bind="newConference.Day">
-                    <option value="">-- Choisir un jour --</option>
-                    <option value="Jour 1">Jour 1</option>
-                    <option value="Jour 2">Jour 2</option>
-                    <option value="Jour 3">Jour 3</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Créneau horaire :</label>
-                <select @bind="newConference.TimeSlot">
-                    @foreach (var slot in timeSlots)
-                    {
-                        <option>@slot</option>
-                    }
-                </select>
-            </div>
-
-            <div>
-                <label>Salle :</label>
-                <select @bind="newConference.IdRoom">
-                    <option value="">-- Choisir une salle --</option>
-                    @foreach (var room in rooms)
-                    {
-                        <option value="@room.Id">@room.Name</option>                    }
-                </select>
-            </div>
-
-            <div>
-                <label>Titre :</label>
-                <InputText @bind-Value="newConference.Title"/>
-            </div>
-
-            <div>
-                <label>Description :</label>
-                <InputTextArea @bind-Value="newConference.Description"/>
-            </div>
-
-            <div>
-                <label>Conférencier :</label>
-                <select @bind="newConference.IdSpeaker">
-                    <option value="">-- Choisir un conférencier --</option>
-                    @foreach (var speaker in speakers)
-                    {
-                        <option value="@speaker.Id">@speaker.Name</option>                    }
-                </select>
-            </div>
-
-            <button type="submit">Ajouter Conférence</button>
-        </EditForm>
-    }
-    else
-    {
-        <h4>Modifier la conférence</h4>
-
-        <EditForm Model="@editingConference" OnValidSubmit="HandleUpdate">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div>
-                <label>Jour :</label>
-                <select @bind="editingConference.Day">
-                    <option value="">-- Choisir un jour --</option>
-                    <option value="Jour 1">Jour 1</option>
-                    <option value="Jour 2">Jour 2</option>
-                    <option value="Jour 3">Jour 3</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Créneau horaire :</label>
-                <select @bind="editingConference.TimeSlot">
-                    @foreach (var slot in timeSlots)
-                    {
-                        <option>@slot</option>
-                    }
-                </select>
-            </div>
-
-            <div>
-                <label>Salle :</label>
-                <select @bind="newConference.IdRoom">
-                    <option value="">-- Choisir une salle --</option>
-                    @if(speakers.Count == 0)
-                    {
-                        <option value="">Aucun conférencier disponible</option>
-                    }
-                    @foreach (var room in rooms)
-                    {
-                        <option value="@room.Id">@room.Name</option>                    }
-                </select>
-            </div>
-
-            <div>
-                <label>Titre :</label>
-                <InputText @bind-Value="editingConference.Title" />
-            </div>
-
-            <div>
-                <label>Description :</label>
-                <InputTextArea @bind-Value="editingConference.Description" />
-            </div>
-
-            <div>
-                <label>Salle :</label>
-                <select @bind="newConference.IdSpeaker">
-                    <option value="">-- Choisir une salle --</option>
-                    @if(speakers.Count == 0)
-                    {
-                        <option value="">Aucun conférencier disponible</option>
-                    }
-                    @foreach (var room in rooms)
-                    {
-                        <option value="@room.Id">@room.Name</option>                    }
-                </select>
-            </div>
-
-            <button type="submit">Mettre à jour</button>
-            <button type="button" @onclick="() => editingConference = null" style="margin-left: 10px;">Annuler</button>
-        </EditForm>
-    }
-    
-    <h4>Ajouter un nouveau conférencier</h4>
-      
-    @if (!isEditingSpeaker)
-    {
-        <EditForm Model="@newSpeaker" OnValidSubmit="HandleAddSpeaker">
-            <DataAnnotationsValidator/>
-            <ValidationSummary/>
-
-            <div>
-                <label>Nom :</label>
-                <InputText @bind-Value="newSpeaker.Name"/>
-            </div>
-
-            <div>
-                <label>Bio :</label>
-                <InputTextArea @bind-Value="newSpeaker.Bio"/>
-            </div>
-
-            <div>
-                <label>Url Photo :</label>
-                <InputTextArea @bind-Value="newSpeaker.PhotoUrl"/>
-            </div>
-
-            <button type="submit">Ajouter Conférencier</button>
-        </EditForm>
-    }
-    @* if(isEditingSpeaker && selectSpeaker != null) *@
-    @* { *@
-    @*     <EditForm Model="@selectSpeaker" OnValidSubmit="HandleUpdateSpeaker"> *@
-    @*         <DataAnnotationsValidator/> *@
-    @*         <ValidationSummary/> *@
-    @* *@
-    @*         <div> *@
-    @*             <label>Nom :</label> *@
-    @*             <InputText @bind-Value="editingSpeaker.Name" /> *@
-    @*         </div> *@
-    @* *@
-    @*         <div> *@
-    @*             <label>Bio :</label> *@
-    @*             <InputTextArea @bind-Value="editingSpeaker.Bio"/> *@
-    @*         </div> *@
-    @* *@
-    @*         <div> *@
-    @*             <label>Url Photo :</label> *@
-    @*             <InputTextArea @bind-Value="editingSpeaker.PhotoUrl"/> *@
-    @*         </div> *@
-    @* *@
-    @*         <button type="submit">Modifier Conférencier</button> *@
-    @*     </EditForm> *@
-    @* } *@
-    @* *@
-    @* <br/> *@
-    @* <hr/> *@
-    @* <br/> *@
-    
-    @* <h4>Gérer les conférenciers</h4> *@
-    @* *@
-    @* <EditForm Model="@selectSpeaker"> *@
-    @*     <DataAnnotationsValidator/> *@
-    @*     <ValidationSummary/> *@
-    @*      *@
-    @*     <label>Nom :</label> *@
-    @*     <select @bind="selectedSpeakerId"> *@
-    @*         <option value="">-- Choisir un conférencier --</option> *@
-    @*         @if(speakers.Count == 0) *@
-    @*         { *@
-    @*             <option value="">Aucun conférencier disponible</option> *@
-    @*         } *@
-    @*         @foreach (var speak in speakers) *@
-    @*         { *@
-    @*             <option value="@speak.Id">@speak.Name</option>                    } *@
-    @*     </select> *@
-    @* *@
-    @*     <button type="button" @onclick="HandleEditSpeaker" style="margin-left: 10px;">Modifier</button> *@
-    @*     <button type="button" @onclick="HandleDeleteSpeaker" style="margin-left: 10px;">Supprimer</button> *@
-    @* </EditForm> *@
-    @* *@
-    @* <p>@selectSpeaker?.Name</p> *@
-
 
     
 }
 
 <style>
+    .btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 6px;
+    }
+
+    .form-container {
+        background-color: #fdfdfd;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+        max-width: 700px;
+    }
+
+    .form-container label {
+        display: block;
+        font-weight: bold;
+        margin-top: 1rem;
+    }
+
+    .form-container input,
+    .form-container select,
+    .form-container textarea {
+        width: 100%;
+        padding: 0.6rem;
+        margin-top: 0.4rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+    }
+
+    .form-container button {
+        margin-top: 1.5rem;
+        padding: 0.6rem 1.2rem;
+        background-color: #007bff;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .form-container button:hover {
+        background-color: #0056b3;
+    }
+
     .table-conferences {
         width: 100%;
         border-collapse: collapse;
@@ -290,29 +274,33 @@ else
         font-family: Arial, sans-serif;
     }
 
-    .table-conferences th, .table-conferences td {
+    .table-conferences th,
+    .table-conferences td {
         border: 1px solid #ddd;
-        padding: 12px;
+        padding: 10px;
         text-align: left;
+        vertical-align: top;
     }
 
     .table-conferences th {
-        background-color: #f2f2f2;
+        background-color: #f8f8f8;
         font-weight: bold;
         color: #333;
     }
 
     .table-conferences tr:nth-child(even) {
-        background-color: #fafafa;
+        background-color: #f9f9f9;
     }
 
     .table-conferences tr:hover {
-        background-color: #f1f1f1;
+        background-color: #eef0f4;
     }
 
     .table-conferences td img {
-        max-height: 50px;
+        max-height: 48px;
         border-radius: 4px;
+        display: block;
+        margin: auto;
     }
 
     .table-conferences td button {
@@ -332,4 +320,13 @@ else
     .table-conferences td button:hover {
         opacity: 0.85;
     }
+
+    .error-message {
+        color: red;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 2rem;
+    }
+
 </style>

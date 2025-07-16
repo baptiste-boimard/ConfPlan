@@ -21,5 +21,5 @@ public class Conference
   public Speaker? Speaker { get; set; }
   
   [JsonIgnore]
-  public ICollection<UserConference> UserConferences { get; set; } = new List<UserConference>();
+  public ICollection<UserConference>? UserConferences { get; set; } = new List<UserConference>();
 }

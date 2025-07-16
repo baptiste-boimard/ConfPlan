@@ -20,8 +20,4 @@
       <ProjectReference Include="..\ConfPlan.Shared\ConfPlan.Shared.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Migrations\" />
-    </ItemGroup>
-
 </Project>

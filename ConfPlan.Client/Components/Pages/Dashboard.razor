@@ -1,31 +1,32 @@
 ﻿@page "/dashboard"
 
-<h3>Dashboard</h3>
+<div style="display: flex; flex-direction: row; gap: 2rem">
+    <h3 style="font-family: Arial; margin-bottom: 10px;">Dashboard</h3>
 
-<button @onclick="HandleLogout">Se déconnecter</button>
+    <button @onclick="HandleLogout" class="btn btn-danger">Se déconnecter</button>
 
+    @if (_userState.CurrentUser?.Role?.RoleName == "Admin")
+    {
+        <button @onclick="GoToAdmin" class="btn btn-primary">Espace Administrateur</button>
+    }
+</div>
 
-<p>Connecté en tant que : @_userState.CurrentUser.Email (@_userState.CurrentUser.Role?.RoleName)</p>
-
-
-@if (_userState.CurrentUser?.Role?.RoleName == "Admin")
-{
-    <button @onclick="GoToAdmin">
-        Espace Administrateur
-    </button>
-}
+<hr style="border: 1px solid gray"/>
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <div class="alert alert-danger">@errorMessage</div>
+    <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+        <hr style="border: 2px solid red;" />
+        <div style="color: red; font-weight: bold; font-size: 2rem;">
+            @errorMessage
+        </div>
+        <hr style="border: 2px solid red;" />
+    </div>
 }
 
-<hr/>
+<h4 style="margin-top: 20px;">Conférences programmées</h4>
 
-<h4>Conférences existantes</h4>
-
-<h5>Filtres</h5>
-<div class="filters">
+<div class="filters" style="margin-bottom: 10px;">
     <label>Salle :</label>
     <select @bind="selectedRoom">
         <option value="">Toutes</option>
@@ -53,78 +54,76 @@
         }
     </select>
 
-    <button @onclick="ResetFilters">Réinitialiser</button>
+    <button @onclick="ResetFilters" class="btn btn-secondary">Réinitialiser</button>
 </div>
-
-
 
 <table class="table-conferences">
     <thead>
-    <tr>
-        <th>Jour</th>
-        <th>Horaire</th>
-        <th>Salle</th>
-        <th>Nbr participant</th>
-        <th>Titre</th>
-        <th>Description</th>
-        <th>Conférencier</th>
-        <th>Photo</th>
-        <th>Biographie</th>
-        <th>Inscription</th>
-    </tr>
+        <tr>
+            <th>Jour</th>
+            <th>Horaire</th>
+            <th>Salle</th>
+            <th>Nbr</th>
+            <th style="min-width: 120px;">Titre</th>
+            <th style="min-width: 150px;">Description</th>
+            <th style="min-width: 130px;">Conférencier</th>
+            <th style="width: 60px;">Photo</th>
+            <th style="min-width: 200px;">Biographie</th>
+            <th style="width: 100px;">Inscription</th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var conf in conferences)
-    {
-        <tr>
-            <td>@conf.Day</td>
-            <td>@conf.TimeSlot</td>
-            <td>@conf.Room.Name</td>
-            <td>@conf.Participant</td>
-            <td>@conf.Title</td>
-            <td>@conf.Description</td>
-            <td>@conf.Speaker.Name</td>
-            <td>
-                <img src="@conf.Speaker.PhotoUrl" alt="Photo" />
-            </td>
-            <td>@conf.Speaker.Bio</td>
-            <td>
-                <button @onclick="() => Subscription(conf)">✏️</button>
-            </td>
-        </tr>
-    }
+        @foreach (var conf in filteredConferences)
+        {
+            <tr>
+                <td>@conf.Day</td>
+                <td>@conf.TimeSlot</td>
+                <td>@conf.Room.Name</td>
+                <td>@conf.Participant</td>
+                <td>@conf.Title</td>
+                <td>@conf.Description</td>
+                <td>@conf.Speaker.Name</td>
+                <td>
+                    <img src="@conf.Speaker.PhotoUrl" alt="Photo" />
+                </td>
+                <td style="white-space: normal;">@conf.Speaker.Bio</td>
+                <td>
+                    <button @onclick="() => Subscription(conf)" class="btn btn-primary">✏️</button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
-<br/>
-<hr/>
-<br/>
+<br />
+<hr style="border: 1px solid gray"/>
+<br />
 
-<h4>Vos Conférences</h4>
+<h4>Votre programme de conférences</h4>
 
 <table class="table-conferences">
     <thead>
-    <tr>
-        <th>Jour</th>
-        <th>Horaire</th>
-        <th>Salle</th>
-        <th>Titre</th>
-        <th>Se désinscrire ?</th>
-    </tr>
+        <tr>
+            <th>Jour</th>
+            <th>Horaire</th>
+            <th>Salle</th>
+            <th style="min-width: 120px;">Titre</th>
+            <th style="width: 120px;">Se désinscrire ?</th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var conf in userConferences)
-    {
-        <tr>
-            <td>@conf.Day</td>
-            <td>@conf.TimeSlot</td>
-            <td>@conf.Room.Name</td>
-            <td>@conf.Title</td>
-            <td>
-                <button @onclick="() => Unsubscription(conf)">✏️</button>
-            </td>
-        </tr>
-    }
+        @foreach (var conf in userConferences)
+        {
+            <tr>
+                <td>@conf.Day</td>
+                <td>@conf.TimeSlot</td>
+                <td>@conf.Room.Name</td>
+                <td>@conf.Title</td>
+                <td>
+                    <button @onclick="() => Unsubscription(conf)" class="btn btn-danger">❌</button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
@@ -138,44 +137,71 @@
 
     .table-conferences th, .table-conferences td {
         border: 1px solid #ddd;
-        padding: 12px;
+        padding: 10px;
         text-align: left;
+        vertical-align: top;
     }
 
     .table-conferences th {
-        background-color: #f2f2f2;
+        background-color: #f8f8f8;
         font-weight: bold;
         color: #333;
     }
 
     .table-conferences tr:nth-child(even) {
-        background-color: #fafafa;
+        background-color: #f9f9f9;
     }
 
     .table-conferences tr:hover {
-        background-color: #f1f1f1;
+        background-color: #eef0f4;
     }
 
     .table-conferences td img {
-        max-height: 50px;
+        max-height: 48px;
         border-radius: 4px;
+        display: block;
+        margin: auto;
     }
 
-    .table-conferences td button {
-        margin-right: 6px;
-        padding: 6px 10px;
+    .btn {
+        padding: 6px 12px;
         border: none;
         border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
         background-color: #007bff;
         color: white;
-        cursor: pointer;
     }
 
-    .table-conferences td button:last-child {
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-danger {
         background-color: #dc3545;
+        color: white;
     }
 
-    .table-conferences td button:hover {
-        opacity: 0.85;
+    .btn:hover {
+        opacity: 0.9;
+    }
+
+    .filters label {
+        margin-right: 5px;
+        font-weight: bold;
+    }
+
+    .filters select {
+        margin-right: 10px;
+        padding: 5px;
+    }
+
+    .filters button {
+        margin-left: 10px;
     }
 </style>

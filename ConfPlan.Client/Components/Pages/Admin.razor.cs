@@ -110,10 +110,10 @@ public partial class Admin : ComponentBase
       Id = conf.Id,
       Day = conf.Day,
       TimeSlot = conf.TimeSlot,
-      Room = conf.Room,
+      IdRoom = conf.IdRoom,
       Title = conf.Title,
       Description = conf.Description,
-      Speaker = conf.Speaker,
+      IdSpeaker = conf.IdSpeaker,
     };
   }
 

@@ -11,12 +11,14 @@ namespace ConfPlan.Api.Controllers;
 public class ConferenceController : ControllerBase
 {
   private readonly IConferenceRepository _conferenceRepository;
+  private readonly ISpeakerRepository _speakerRepository;
 
   public ConferenceController(
     IConferenceRepository conferenceRepository,
-    PostgresDbContext context)
+    ISpeakerRepository speakerRepository)
   {
     _conferenceRepository = conferenceRepository;
+    _speakerRepository = speakerRepository;
   }
 
   [HttpGet("getall")]
@@ -63,19 +65,24 @@ public class ConferenceController : ControllerBase
     // Vérifier si une conference existe déjà sur les meme creaneaux et la meme salle
     var existingConferenceAtSameDate= await _conferenceRepository.GetConferenceByDayAndTimeSlot(updated);
     
-    if(existingConferenceAtSameDate != null)
+    if(existingConferenceAtSameDate != null && existingConferenceAtSameDate.Id != updated.Id)
       return Conflict(new { message = "Ce créneau ou cette salle sont déjà réservés" });
     
     var conf = await _conferenceRepository.GetConferenceById(updated.Id);
     
     if (conf == null) return NotFound( new { message = "La conférence n'existe pas." });
+    
+    var room = await _conferenceRepository.GetOneRoomById(updated.IdRoom);
+    var speaker = await _speakerRepository.GetOneSpeakersById(updated.IdSpeaker);
 
     conf.Day = updated.Day;
     conf.TimeSlot = updated.TimeSlot;
+    conf.IdRoom = updated.IdRoom;
+    conf.Room = room;
     conf.Title = updated.Title;
-    conf.Room = updated.Room;
     conf.Description = updated.Description;
-    conf.Speaker = updated.Speaker;
+    conf.IdSpeaker = updated.IdSpeaker;
+    conf.Speaker = speaker;
 
     var updatingConference = await _conferenceRepository.UpdateConference(conf);
     

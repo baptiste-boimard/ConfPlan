@@ -12,8 +12,8 @@ using Service.OAuth.Database;
 namespace ConfPlan.Api.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20250716082255_Initial")]
-    partial class Initial
+    [Migration("20250716143907_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,17 +82,17 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f78bf1cd-eecb-4052-acfd-54321b9e910d"),
+                            Id = new Guid("8a738c4e-9c30-48d2-9817-f59a657e529c"),
                             RoleName = "Visiteur"
                         },
                         new
                         {
-                            Id = new Guid("46c7b826-77cb-4703-b9bd-0bcb02c009f0"),
+                            Id = new Guid("d5ab69c2-4b14-4a15-8a90-1b3a86eb8aa2"),
                             RoleName = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("8ed44415-8ce7-4c1f-8a62-46733981076f"),
+                            Id = new Guid("a3fef80b-2b2e-46d1-a88e-123d0d7a7615"),
                             RoleName = "Sponsor"
                         });
                 });
@@ -125,70 +125,70 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("883b96b3-7068-4d96-a961-b3a66f8fe684"),
+                            Id = new Guid("23e25c37-1d79-45f2-b0d5-8f7f4144525c"),
                             CurrentCapacity = 0,
                             MaxCapacity = 20,
                             Name = "Salle A"
                         },
                         new
                         {
-                            Id = new Guid("4f3990c3-b645-4bf1-b8e1-b52d43d84fe8"),
+                            Id = new Guid("16d87d5d-6c25-448c-9bb9-65b0a7c2e729"),
                             CurrentCapacity = 0,
                             MaxCapacity = 20,
                             Name = "Salle B"
                         },
                         new
                         {
-                            Id = new Guid("98c6bf3e-af97-4468-be47-ee62b947ff71"),
+                            Id = new Guid("5bcbef3c-9790-4032-84c2-3b0706464b6f"),
                             CurrentCapacity = 0,
                             MaxCapacity = 10,
                             Name = "Salle C"
                         },
                         new
                         {
-                            Id = new Guid("e1fc04ea-72e4-4dfc-8abe-a26701405ec2"),
+                            Id = new Guid("0f29a8cb-4931-4b60-9473-fd2a3932e2d3"),
                             CurrentCapacity = 0,
                             MaxCapacity = 10,
                             Name = "Salle D"
                         },
                         new
                         {
-                            Id = new Guid("6db3c227-dc34-45be-b41f-9cc8580c06f2"),
+                            Id = new Guid("7dc3d927-2f26-4c39-bdd2-4b6e17b7d0ac"),
                             CurrentCapacity = 0,
                             MaxCapacity = 5,
                             Name = "Salle E"
                         },
                         new
                         {
-                            Id = new Guid("2c06bfb2-bce5-4e65-8773-f71e0c98b9b7"),
+                            Id = new Guid("d4fd6f46-7788-4f78-a79a-2f0a5f8c2e7e"),
                             CurrentCapacity = 0,
                             MaxCapacity = 5,
                             Name = "Salle F"
                         },
                         new
                         {
-                            Id = new Guid("d493d774-4736-42f0-a200-ef7192161732"),
+                            Id = new Guid("902beee3-83f5-48c6-8b5b-2214e03bdb20"),
                             CurrentCapacity = 0,
                             MaxCapacity = 50,
                             Name = "Salle G"
                         },
                         new
                         {
-                            Id = new Guid("7de57b4a-48ed-4372-a5b1-8e821e08f0d2"),
+                            Id = new Guid("f203c2a4-69b7-43ee-8133-547b1928a99a"),
                             CurrentCapacity = 0,
                             MaxCapacity = 50,
                             Name = "Salle H"
                         },
                         new
                         {
-                            Id = new Guid("db45d60d-3156-4532-903e-1a1d86e6a723"),
+                            Id = new Guid("2aa6be59-5803-4de3-b7f3-9d1f8ef57988"),
                             CurrentCapacity = 0,
                             MaxCapacity = 100,
                             Name = "Salle I"
                         },
                         new
                         {
-                            Id = new Guid("5738529c-4a0a-4377-8ea4-9b56d1f7dd9c"),
+                            Id = new Guid("7955e403-91e2-4c7b-b9f4-e9f47ce2b850"),
                             CurrentCapacity = 0,
                             MaxCapacity = 100,
                             Name = "Salle J"
@@ -225,21 +225,21 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("bbecb148-8c52-49cb-b5e0-b839c9d34fa3"),
+                            Id = new Guid("aac7801e-83fc-4f45-89a1-9f867a1efc90"),
                             Bio = "Le professeur Michel Dupont est un expert reconnu en Data Learning, alliant recherche académique et applications industrielles.\nIl enseigne l'intelligence artificielle et le machine learning dans plusieurs établissements de renom.\nSes travaux portent sur l’apprentissage automatique, les réseaux de neurones et les systèmes intelligents.\nIl intervient régulièrement dans des conférences pour partager ses découvertes et pratiques innovantes.\nPassionné par la transmission du savoir, il accompagne aussi des projets en transformation numérique.",
                             Name = "Michel Dupont",
                             PhotoUrl = "https://images.generated.photos/SRoJei2r0zIOyegFdcuLXagsSfVOY-G_WNLiKFIMy-g/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MzMyMzU2LmpwZw.jpg"
                         },
                         new
                         {
-                            Id = new Guid("ad04d6af-c784-4aa7-b12e-d430d3e4e812"),
+                            Id = new Guid("3e499e2f-1db7-4aa9-b3ab-810b5cb7e5b1"),
                             Bio = "Victoria Martin est une spécialiste de l’UI/UX avec plus de 10 ans d’expérience dans la conception centrée utilisateur.\nElle accompagne des entreprises innovantes dans la création d’interfaces intuitives et engageantes.\nSon approche allie design émotionnel, accessibilité et performance.\nElle intervient régulièrement en conférences pour partager sa vision du design éthique et durable.\nVictoria est également mentor pour de jeunes designers qu’elle forme aux meilleures pratiques du secteur.",
                             Name = "Victoria Martin",
                             PhotoUrl = "https://images.generated.photos/BAGgXKAepAIfdaVT-GQ2CMaXys3XZ5qdTVIqL1XFN2E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/ODE3MTI0LmpwZw.jpg"
                         },
                         new
                         {
-                            Id = new Guid("acadf356-4043-42dc-a17d-67fc151b84dd"),
+                            Id = new Guid("f777e354-cb8c-438c-b15e-5d6ad3eb71e6"),
                             Bio = "Albert MetalStein est un expert visionnaire en physique des métaux et matériaux avancés.\nSes recherches repoussent les limites de la conductivité, de la résistance et de la transformation des alliages.\nIl est reconnu pour ses travaux sur les propriétés quantiques des structures métalliques.\nConférencier passionné, il vulgarise la science du métal avec précision et énergie.\nAlbert collabore avec des laboratoires et industries à la pointe de l’innovation métallurgique.",
                             Name = "Albert MetalStein",
                             PhotoUrl = "https://images.generated.photos/IlHIAAkLdeOdb8dHl4uHy7neqz3DgWD4tE7PcqCGzz4/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/NTMyNzc5LmpwZw.jpg"
@@ -272,9 +272,9 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("731e2c1f-a83e-4faf-8439-45079e856617"),
+                            Id = new Guid("57df6d2f-4fbd-49f2-89f2-d3b14a91d6cd"),
                             Email = "admin@confplan.dev",
-                            IdRole = new Guid("46c7b826-77cb-4703-b9bd-0bcb02c009f0"),
+                            IdRole = new Guid("d5ab69c2-4b14-4a15-8a90-1b3a86eb8aa2"),
                             Password = "$2a$12$ytsbB3JQWKgtrDjAFVJm3eASfxMqBqE8JlYDXBzkPbwt28oFP9unq"
                         });
                 });
