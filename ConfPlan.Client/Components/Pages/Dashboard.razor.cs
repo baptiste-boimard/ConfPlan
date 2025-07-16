@@ -13,6 +13,7 @@ public partial class Dashboard : ComponentBase
     
     private bool _shouldRedirect = false;
     private List<Conference> conferences = new();
+    private List<Conference> userConferences = new();
     private string? errorMessage;
     
     private string selectedRoom = "";
@@ -38,6 +39,7 @@ public partial class Dashboard : ComponentBase
         }
         
         await LoadConferences();
+        await LoadUserConferences();
 
     }
 
@@ -68,11 +70,28 @@ public partial class Dashboard : ComponentBase
             StateHasChanged();
         }
     }
+    
+    private async Task LoadUserConferences()
+    {
+        var result = await _userConferenceState.GetAllSubscription();
+    
+        if(!result.Success)
+        {
+            errorMessage = result.Message ?? "Une erreur s'est produite lors du chargement des conférences.";
+        }
+        else
+        {
+            userConferences = result.UserConferences;
+            
+            StateHasChanged();
+        }
+    }
 
     private void GoToAdmin()
     {
         _navigationManager.NavigateTo("/admin");
     }
+    
     private void HandleLogout()
     {
         _userState.Logout();
@@ -102,31 +121,33 @@ public partial class Dashboard : ComponentBase
         }
         else
         {
-            // await LoadUserConferences();
+            await LoadUserConferences();
+            await LoadConferences();
       
             StateHasChanged();
         }
     }
     
-    // private async Task Unsubscription(Conference conf)
-    // {
-    //     var userConference = new UserConference
-    //     {
-    //         IdConference = conf.Id,
-    //         IdUser = _userState.CurrentUser.Id
-    //     };
-    //     
-    //     var result = await _userConferenceState.Subscription(userConference);
-    //     
-    //     if (!result.Success)
-    //     {
-    //         errorMessage = result.Message ?? "Une erreur s'est produite lors de l'effacement de la conférence.";
-    //     }
-    //     else
-    //     {
-    //         await LoadUserConferences();
-    //   
-    //         StateHasChanged();
-    //     }
-    // }
+    private async Task Unsubscription(Conference conf)
+    {
+        var userConference = new UserConference
+        {
+            IdConference = conf.Id,
+            IdUser = _userState.CurrentUser.Id
+        };
+        
+        var result = await _userConferenceState.Unsubscription(userConference);
+        
+        if (!result.Success)
+        {
+            errorMessage = result.Message ?? "Une erreur s'est produite lors de l'effacement de votre participation.";
+        }
+        else
+        {
+            await LoadUserConferences();
+            await LoadConferences();
+      
+            StateHasChanged();
+        }
+    }
 }

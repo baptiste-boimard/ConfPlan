@@ -244,4 +244,9 @@ public partial class Admin : ComponentBase
   //     errorMessage = result.Message ?? "Erreur lors de la suppression du conférencier.";
   //   }
   // }
+  
+  private void GoToDashboard()
+  {
+    _navigationManager.NavigateTo("/dashboard");
+  } 
 }

@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IConferenceRepository, ConferenceRepository>();
 builder.Services.AddScoped<ISpeakerRepository, SpeakerRepository>();
+builder.Services.AddScoped<IUserConferenceRepository, UserConferenceRepository>();
 
 builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<PlaceManagement>();

@@ -6,6 +6,6 @@ public class UserConference
   public Guid IdUser { get; set; }
   public Guid IdConference { get; set; }
   
-  public User User { get; set; }
-  public Conference Conference { get; set; }
+  public User? User { get; set; }
+  public Conference? Conference { get; set; }
 }

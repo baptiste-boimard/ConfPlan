@@ -4,6 +4,10 @@
 
 <h3>Gestion des conférences</h3>
 
+<button @onclick="GoToDashboard">
+    Dashboard
+</button>
+
 @if (!isLoaded)
 {
     <p>Chargement...</p>
@@ -19,7 +23,7 @@ else
             <th>Jour</th>
             <th>Horaire</th>
             <th>Salle</th>
-            <th>Remplissage</th>
+            <th>Nbr participant</th>
             <th>Titre</th>
             <th>Description</th>
             <th>Conférencier</th>
@@ -35,7 +39,7 @@ else
                 <td>@conf.Day</td>
                 <td>@conf.TimeSlot</td>
                 <td>@conf.Room.Name</td>
-                <td>@conf.Room.CurrentCapacity / @conf.Room.MaxCapacity</td>
+                <td>@conf.Participant</td>
                 <td>@conf.Title</td>
                 <td>@conf.Description</td>
                 <td>@conf.Speaker.Name</td>

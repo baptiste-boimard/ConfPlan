@@ -11,4 +11,7 @@ public class Room
   
   [JsonIgnore]
   public Conference? Conference{ get; set; }
+  [JsonIgnore]
+  public ICollection<Conference> Conferences { get; set; } = new List<Conference>();
+
 }

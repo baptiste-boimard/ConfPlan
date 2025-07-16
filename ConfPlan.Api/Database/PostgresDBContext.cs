@@ -53,13 +53,13 @@ public class PostgresDbContext : DbContext
             entity.Property(a => a.Participant).IsRequired();
             
             entity.HasOne(a => a.Room)
-                .WithOne(r => r.Conference)
-                .HasForeignKey<Conference>(a => a.IdRoom)
+                .WithMany(r => r.Conferences)
+                .HasForeignKey(a => a.IdRoom)
                 .OnDelete(DeleteBehavior.Restrict);
             
             entity.HasOne(a => a.Speaker)
-                .WithOne(r => r.Conference)
-                .HasForeignKey<Conference>(a => a.IdSpeaker)
+                .WithMany(r => r.Conferences)
+                .HasForeignKey(a => a.IdSpeaker)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

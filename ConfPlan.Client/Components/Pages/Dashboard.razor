@@ -64,7 +64,7 @@
         <th>Jour</th>
         <th>Horaire</th>
         <th>Salle</th>
-        <th>Remplissage</th>
+        <th>Nbr participant</th>
         <th>Titre</th>
         <th>Description</th>
         <th>Conférencier</th>
@@ -74,13 +74,13 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var conf in filteredConferences)
+    @foreach (var conf in conferences)
     {
         <tr>
             <td>@conf.Day</td>
             <td>@conf.TimeSlot</td>
             <td>@conf.Room.Name</td>
-            <td>@conf.Room.CurrentCapacity / @conf.Room.MaxCapacity</td>
+            <td>@conf.Participant</td>
             <td>@conf.Title</td>
             <td>@conf.Description</td>
             <td>@conf.Speaker.Name</td>
@@ -113,7 +113,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var conf in filteredConferences)
+    @foreach (var conf in userConferences)
     {
         <tr>
             <td>@conf.Day</td>
@@ -121,7 +121,7 @@
             <td>@conf.Room.Name</td>
             <td>@conf.Title</td>
             <td>
-                @* <button @onclick="() => Unsubscription(conf)">✏️</button> *@
+                <button @onclick="() => Unsubscription(conf)">✏️</button>
             </td>
         </tr>
     }

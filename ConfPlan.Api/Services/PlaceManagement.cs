@@ -4,10 +4,14 @@ namespace ConfPlan.Api.Services;
 
 public class PlaceManagement
 {
+  private readonly IUserConferenceRepository _userConferenceRepository;
   private readonly IConferenceRepository _conferenceRepository;
 
-  public PlaceManagement(IConferenceRepository conferenceRepository)
+  public PlaceManagement(
+    IUserConferenceRepository userConferenceRepository,
+    IConferenceRepository conferenceRepository)
   {
+    _userConferenceRepository = userConferenceRepository;
     _conferenceRepository = conferenceRepository;
   }
   
@@ -48,5 +52,21 @@ public class PlaceManagement
 
     //Mise à jour de la conférence
     await _conferenceRepository.UpdateConference(conference);
+  }
+  
+  public async Task<bool> CheckSameTime(Guid idUser, Guid idConference)
+  {
+    // Récupération de la liste des conférences de l'utilisateur
+    var userConferences = await _userConferenceRepository.GetAllUserConferences(idUser);
+
+    // Récupération de la conférence à vérifier
+    var conference = await _conferenceRepository.GetConferenceById(idConference);
+    
+    // Vérification si l'utilisateur a une conférence à la même heure
+    if (userConferences.Any(c => c.Day == conference.Day &&
+      c.TimeSlot == conference.TimeSlot))
+      return true;
+
+    return false;
   }
 }

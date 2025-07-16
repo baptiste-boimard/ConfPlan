@@ -23,16 +23,16 @@ public class UserConferenceController : ControllerBase
   [HttpPost("getall")]
   public async Task<IActionResult> GetAllUserConferences([FromBody] User user)
   {
-    var userConferences = await _userConferenceRepository.GetAllUserConferences(user.Id);
+    var conferences = await _userConferenceRepository.GetAllUserConferences(user.Id);
     
-    return Ok(userConferences);
+    return Ok(conferences);
   }
   
   [HttpPost("subscription")]
   public async Task<IActionResult> Subscription([FromBody] UserConference userConf)
   {
-    if (userConf.IdUser == Guid.Empty || userConf.IdConference == Guid.Empty)
-      return BadRequest(new { message = "Champs requis" });
+    // if (userConf.IdUser == Guid.Empty || userConf.IdConference == Guid.Empty)
+    //   return BadRequest(new { message = "Champs requis" });
     
     // Vérifier si un userConference existe déjà
     var existingUserConference = await _userConferenceRepository.GetOneUserConference(userConf);
@@ -42,6 +42,12 @@ public class UserConferenceController : ControllerBase
     
     if(existingUserConference != null)
       return Conflict(new { message = "Vous êtes dèjà inscrit à cette conférence." });
+    
+    // Vérification que j'ai pas une conférence en meme temps
+    var checkSameTime = await _placeManagement.CheckSameTime(userConf.IdUser, userConf.IdConference);
+
+    if (checkSameTime)
+      return BadRequest(new { message = "Vous avez déjà une conférence à cette heure." });      
     
     userConf.Id = Guid.NewGuid();
     
@@ -54,5 +60,25 @@ public class UserConferenceController : ControllerBase
     await _placeManagement.AddOneParticipant(userConf.IdConference);
     
     return Ok(newUserConference);
+  }
+  
+  [HttpPost("unsubscription")]
+  public async Task<IActionResult> Unsubscription([FromBody] UserConference userConf)
+  {
+    // Trouver le userConference 
+    var existingUserConference = await _userConferenceRepository.GetOneUserConference(userConf);
+    
+    if(existingUserConference == null)
+      return BadRequest(new { message = "Cette séance n'existe pas." });
+    
+    var deletedUserConference = await _userConferenceRepository.RemoveUserConference(existingUserConference);
+    
+    if(deletedUserConference == null)
+      return StatusCode(500, new { message = "Erreur lors de la suppression de la séance." });
+    
+    // Il faut reduire le nombre de participants a cette conference de 1
+    await _placeManagement.RemoveOneParticipant(userConf.IdConference);
+    
+    return Ok(deletedUserConference);
   }
 }
