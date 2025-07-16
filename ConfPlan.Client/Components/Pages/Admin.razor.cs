@@ -22,8 +22,9 @@ public partial class Admin : ComponentBase
   
   private Conference newConference = new();
   private Speaker newSpeaker = new();
-  private Guid selectedSpeakerId;
-  private Speaker? selectSpeaker => speakers.FirstOrDefault(s => s.Id == selectedSpeakerId);  private List<string> timeSlots = new()
+  // private Guid selectedSpeakerId;
+  // private Speaker? selectSpeaker => speakers.FirstOrDefault(s => s.Id == selectedSpeakerId);
+  private List<string> timeSlots = new()
   {
     "9h30 - 10h", "10h - 10h30", "10h30 - 11h", "11h - 12h",
     "13h - 13h30", "13h30 - 14h", "14h30 - 15h", "15h - 16h",
@@ -186,61 +187,61 @@ public partial class Admin : ComponentBase
     }
   }
 
-  private async Task HandleEditSpeaker()
-  {
-    if (selectedSpeakerId is null)
-    {
-      errorMessage = "Aucun conférencier sélectionné.";
-      return;
-    }
-
-    editingSpeaker = new Speaker
-    {
-      Id = selectSpeaker.Id,
-      Name = selectSpeaker.Name,
-      Bio = selectSpeaker.Bio,
-      PhotoUrl = selectSpeaker.PhotoUrl,
-    };
-    isEditingSpeaker = true;
-    Console.WriteLine("Editing speaker: " + selectSpeaker.Name);
-  }
+  // private async Task HandleEditSpeaker()
+  // {
+  //   if (selectedSpeakerId is null)
+  //   {
+  //     errorMessage = "Aucun conférencier sélectionné.";
+  //     return;
+  //   }
+  //
+  //   editingSpeaker = new Speaker
+  //   {
+  //     Id = selectSpeaker.Id,
+  //     Name = selectSpeaker.Name,
+  //     Bio = selectSpeaker.Bio,
+  //     PhotoUrl = selectSpeaker.PhotoUrl,
+  //   };
+  //   isEditingSpeaker = true;
+  //   Console.WriteLine("Editing speaker: " + selectSpeaker.Name);
+  // }
   
-  private async Task HandleUpdateSpeaker()
-  {
-    if (editingSpeaker is null) return;
-
-    var result = await _speakerState.UpdateAsync(editingSpeaker);
-
-    if (result.Success)
-    {
-      await LoadSpeakers();
-      editingSpeaker = null;
-      StateHasChanged();
-    }
-    else
-    {
-      errorMessage = result.Message ?? "Erreur lors de la mise à jour du conférencier.";
-    }
-  }
+  // private async Task HandleUpdateSpeaker()
+  // {
+  //   if (editingSpeaker is null) return;
+  //
+  //   var result = await _speakerState.UpdateAsync(editingSpeaker);
+  //
+  //   if (result.Success)
+  //   {
+  //     await LoadSpeakers();
+  //     editingSpeaker = null;
+  //     StateHasChanged();
+  //   }
+  //   else
+  //   {
+  //     errorMessage = result.Message ?? "Erreur lors de la mise à jour du conférencier.";
+  //   }
+  // }
   
-  private async Task HandleDeleteSpeaker()
-  {
-    if (selectSpeaker is null)
-    {
-      errorMessage = "Aucun conférencier sélectionné.";
-      return;
-    }
-    
-    var result = await _speakerState.DeleteAsync(selectSpeaker);
-
-    if (result.Success)
-    {
-      await LoadSpeakers();
-      StateHasChanged();
-    }
-    else
-    {
-      errorMessage = result.Message ?? "Erreur lors de la suppression du conférencier.";
-    }
-  }
+  // private async Task HandleDeleteSpeaker()
+  // {
+  //   if (selectSpeaker is null)
+  //   {
+  //     errorMessage = "Aucun conférencier sélectionné.";
+  //     return;
+  //   }
+  //   
+  //   var result = await _speakerState.DeleteAsync(selectSpeaker);
+  //
+  //   if (result.Success)
+  //   {
+  //     await LoadSpeakers();
+  //     StateHasChanged();
+  //   }
+  //   else
+  //   {
+  //     errorMessage = result.Message ?? "Erreur lors de la suppression du conférencier.";
+  //   }
+  // }
 }

@@ -16,6 +16,7 @@ public class PostgresDbContext : DbContext
     public DbSet<Conference> Conferences { get; set; }
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Speaker> Speakers { get; set; }
+    public DbSet<UserConference> UserConferences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,6 +50,7 @@ public class PostgresDbContext : DbContext
             entity.Property(a => a.Title).IsRequired();
             entity.Property(a => a.Description).IsRequired();
             entity.Property(a => a.IdSpeaker).IsRequired();
+            entity.Property(a => a.Participant).IsRequired();
             
             entity.HasOne(a => a.Room)
                 .WithOne(r => r.Conference)
@@ -77,6 +79,29 @@ public class PostgresDbContext : DbContext
             entity.Property(a => a.PhotoUrl).IsRequired();
         });
         
+        // modelBuilder.Entity<UserConference>(entity =>
+        // {
+        //     entity.HasKey(a => a.Id);
+        //     entity.Property(a => a.IdUser).IsRequired();
+        //     entity.Property(a => a.IdConference).IsRequired();
+        //     
+        //     
+        // }
+        
+        modelBuilder.Entity<UserConference>(entity =>
+        {
+            entity.HasKey(uc => new { uc.IdUser, uc.IdConference }); // Composite Key
+
+            entity.HasOne(uc => uc.User)
+                .WithMany(u => u.UserConferences)
+                .HasForeignKey(uc => uc.IdUser);
+
+            entity.HasOne(uc => uc.Conference)
+                .WithMany(c => c.UserConferences)
+                .HasForeignKey(uc => uc.IdConference);
+        });
+        
+        
         var visiteurId = Guid.NewGuid();
         var adminId = Guid.NewGuid();
         var sponsorId = Guid.NewGuid();
@@ -96,6 +121,7 @@ public class PostgresDbContext : DbContext
         
         var speaker1Id = Guid.NewGuid();
         var speaker2Id = Guid.NewGuid();
+        var speaker3Id = Guid.NewGuid();
         
         modelBuilder.Entity<Role>().HasData(
             new Role { Id = visiteurId, RoleName = "Visiteur" },
@@ -140,6 +166,13 @@ public class PostgresDbContext : DbContext
                 Name = "Victoria Martin",
                 Bio = "Victoria Martin est une spécialiste de l’UI/UX avec plus de 10 ans d’expérience dans la conception centrée utilisateur.\nElle accompagne des entreprises innovantes dans la création d’interfaces intuitives et engageantes.\nSon approche allie design émotionnel, accessibilité et performance.\nElle intervient régulièrement en conférences pour partager sa vision du design éthique et durable.\nVictoria est également mentor pour de jeunes designers qu’elle forme aux meilleures pratiques du secteur.",
                 PhotoUrl = "https://images.generated.photos/BAGgXKAepAIfdaVT-GQ2CMaXys3XZ5qdTVIqL1XFN2E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/ODE3MTI0LmpwZw.jpg"
+            },
+            new Speaker
+            {
+                Id = speaker3Id,
+                Name = "Albert MetalStein",
+                Bio = "Albert MetalStein est un expert visionnaire en physique des métaux et matériaux avancés.\nSes recherches repoussent les limites de la conductivité, de la résistance et de la transformation des alliages.\nIl est reconnu pour ses travaux sur les propriétés quantiques des structures métalliques.\nConférencier passionné, il vulgarise la science du métal avec précision et énergie.\nAlbert collabore avec des laboratoires et industries à la pointe de l’innovation métallurgique.",
+                PhotoUrl = "https://images.generated.photos/IlHIAAkLdeOdb8dHl4uHy7neqz3DgWD4tE7PcqCGzz4/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/NTMyNzc5LmpwZw.jpg"
             }
         );
     }

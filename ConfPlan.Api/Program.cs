@@ -12,6 +12,7 @@ builder.Services.AddScoped<IConferenceRepository, ConferenceRepository>();
 builder.Services.AddScoped<ISpeakerRepository, SpeakerRepository>();
 
 builder.Services.AddScoped<PasswordHasher>();
+builder.Services.AddScoped<PlaceManagement>();
 
 builder.Services.AddControllers();
 

@@ -1,4 +1,6 @@
-﻿namespace ConfPlan.Shared;
+﻿using System.Text.Json.Serialization;
+
+namespace ConfPlan.Shared;
 
 public class Conference
 {
@@ -13,6 +15,11 @@ public class Conference
 
   public Guid IdSpeaker { get; set; }
   
+  public int Participant { get; set; } = 0;
+  
   public Room? Room { get; set; }
   public Speaker? Speaker { get; set; }
+  
+  [JsonIgnore]
+  public ICollection<UserConference> UserConferences { get; set; } = new List<UserConference>();
 }

@@ -1,4 +1,6 @@
-﻿namespace ConfPlan.Shared;
+﻿using System.Text.Json.Serialization;
+
+namespace ConfPlan.Shared;
 
 public class User
 {
@@ -8,4 +10,7 @@ public class User
   
   public Guid IdRole { get; set; }
   public Role? Role { get; set; }
+  
+  [JsonIgnore]
+  public ICollection<UserConference> UserConferences { get; set; } = new List<UserConference>();
 }

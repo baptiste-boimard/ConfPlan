@@ -9,11 +9,26 @@ public partial class Dashboard : ComponentBase
     [Inject] private NavigationManager _navigationManager { get; set; }
     [Inject] private UserState _userState { get; set; }
     [Inject] private ConferenceState _conferenceState { get; set; }
+    [Inject] private UserConferenceState _userConferenceState { get; set; }
     
     private bool _shouldRedirect = false;
     private List<Conference> conferences = new();
     private string? errorMessage;
+    
+    private string selectedRoom = "";
+    private string selectedDay = "";
+    private string selectedSpeaker = "";
 
+    private List<string> roomNames = new();
+    private List<string> availableDays = new();
+    private List<string> speakerNames = new();
+
+    private IEnumerable<Conference> filteredConferences => conferences
+        .Where(c =>
+            (string.IsNullOrEmpty(selectedRoom) || c.Room.Name == selectedRoom) &&
+            (string.IsNullOrEmpty(selectedDay) || c.Day == selectedDay) &&
+            (string.IsNullOrEmpty(selectedSpeaker) || c.Speaker.Name == selectedSpeaker)
+        );
     
     protected async override void OnInitialized()
     {
@@ -45,6 +60,11 @@ public partial class Dashboard : ComponentBase
         else
         {
             conferences = result.Conferences;
+            
+            roomNames = conferences.Select(c => c.Room.Name).Distinct().ToList();
+            availableDays = conferences.Select(c => c.Day).Distinct().ToList();
+            speakerNames = conferences.Select(c => c.Speaker.Name).Distinct().ToList();
+            
             StateHasChanged();
         }
     }
@@ -58,4 +78,55 @@ public partial class Dashboard : ComponentBase
         _userState.Logout();
         _navigationManager.NavigateTo("/", forceLoad: true); // forceReload au cas où
     }
+    
+    private void ResetFilters()
+    {
+        selectedRoom = "";
+        selectedDay = "";
+        selectedSpeaker = "";
+    }
+
+    private async Task Subscription(Conference conf)
+    {
+        var userConference = new UserConference
+        {
+            IdConference = conf.Id,
+            IdUser = _userState.CurrentUser.Id
+        };
+        
+        var result = await _userConferenceState.Subscription(userConference);
+        
+        if (!result.Success)
+        {
+            errorMessage = result.Message ?? "Une erreur s'est produite lors de l'effacement de la conférence.";
+        }
+        else
+        {
+            // await LoadUserConferences();
+      
+            StateHasChanged();
+        }
+    }
+    
+    // private async Task Unsubscription(Conference conf)
+    // {
+    //     var userConference = new UserConference
+    //     {
+    //         IdConference = conf.Id,
+    //         IdUser = _userState.CurrentUser.Id
+    //     };
+    //     
+    //     var result = await _userConferenceState.Subscription(userConference);
+    //     
+    //     if (!result.Success)
+    //     {
+    //         errorMessage = result.Message ?? "Une erreur s'est produite lors de l'effacement de la conférence.";
+    //     }
+    //     else
+    //     {
+    //         await LoadUserConferences();
+    //   
+    //         StateHasChanged();
+    //     }
+    // }
 }

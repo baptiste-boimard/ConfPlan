@@ -12,7 +12,7 @@ using Service.OAuth.Database;
 namespace ConfPlan.Api.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20250715172257_Initial")]
+    [Migration("20250716071148_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -42,17 +42,8 @@ namespace ConfPlan.Api.Migrations
                     b.Property<Guid>("IdRoom")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("SpeakerBio")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SpeakerName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SpeakerPhotoUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("IdSpeaker")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("TimeSlot")
                         .IsRequired()
@@ -65,6 +56,9 @@ namespace ConfPlan.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IdRoom")
+                        .IsUnique();
+
+                    b.HasIndex("IdSpeaker")
                         .IsUnique();
 
                     b.ToTable("Conferences");
@@ -87,17 +81,17 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("75115e60-39ed-43de-ab04-b0de37753703"),
+                            Id = new Guid("502baf9f-1677-41e7-b7ce-6dc03b5b727c"),
                             RoleName = "Visiteur"
                         },
                         new
                         {
-                            Id = new Guid("bcc28637-ab86-4d36-a872-4cefebbc9691"),
+                            Id = new Guid("dac893ef-d2ea-4c83-84c6-05652083d295"),
                             RoleName = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("ed3f8988-a5cf-4e5e-925e-238dc90ec0eb"),
+                            Id = new Guid("4a4b2bb1-ea16-4cb1-96e0-89e4adff7446"),
                             RoleName = "Sponsor"
                         });
                 });
@@ -125,73 +119,112 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("02ad0587-9a12-40f9-950e-cfbf9fca42ef"),
+                            Id = new Guid("d1061fc9-1feb-49d4-a88c-dfbe9e4a283a"),
                             CurrentCapacity = 0,
                             MaxCapacity = 20,
                             Name = "Salle A"
                         },
                         new
                         {
-                            Id = new Guid("7677d878-0bb4-4606-a641-80b29877ff95"),
+                            Id = new Guid("23abee76-f3e1-471c-804e-e060a1123812"),
                             CurrentCapacity = 0,
                             MaxCapacity = 20,
                             Name = "Salle B"
                         },
                         new
                         {
-                            Id = new Guid("60ca597c-72d0-4454-bc69-1df6c1e0242a"),
+                            Id = new Guid("e0e53978-44ec-4934-b5bb-9c1fafe0850d"),
                             CurrentCapacity = 0,
                             MaxCapacity = 10,
                             Name = "Salle C"
                         },
                         new
                         {
-                            Id = new Guid("3953e1fd-af4d-4b97-8ab3-f64fea2eae04"),
+                            Id = new Guid("06b69cfc-9b90-4117-975b-4e6e0eb7b075"),
                             CurrentCapacity = 0,
                             MaxCapacity = 10,
                             Name = "Salle D"
                         },
                         new
                         {
-                            Id = new Guid("7bf76c10-5763-4935-9607-52c67982579a"),
+                            Id = new Guid("37c396c9-5f76-4604-ad59-899adef2ef6c"),
                             CurrentCapacity = 0,
                             MaxCapacity = 5,
                             Name = "Salle E"
                         },
                         new
                         {
-                            Id = new Guid("9ac9f4c2-893a-45e6-84a1-80249ed16d9a"),
+                            Id = new Guid("95459bc8-4c61-4a1a-8d9d-147ec723cda3"),
                             CurrentCapacity = 0,
                             MaxCapacity = 5,
                             Name = "Salle F"
                         },
                         new
                         {
-                            Id = new Guid("96625fba-b7cf-4a3f-bf6e-07aa490370c4"),
+                            Id = new Guid("19b30ee9-e08e-4a42-8b7b-9aad5d3bc97d"),
                             CurrentCapacity = 0,
                             MaxCapacity = 50,
                             Name = "Salle G"
                         },
                         new
                         {
-                            Id = new Guid("51211ce8-67e9-496b-9add-2e4875c7962a"),
+                            Id = new Guid("522c6dab-919a-44eb-8c1e-414ce785e430"),
                             CurrentCapacity = 0,
                             MaxCapacity = 50,
                             Name = "Salle H"
                         },
                         new
                         {
-                            Id = new Guid("d3ef5b18-5934-4567-88b9-2407537025a1"),
+                            Id = new Guid("c147342e-7353-49bf-b77c-729dce6767c2"),
                             CurrentCapacity = 0,
                             MaxCapacity = 100,
                             Name = "Salle I"
                         },
                         new
                         {
-                            Id = new Guid("70e5043b-3ed4-4fd5-8473-86bd407170c0"),
+                            Id = new Guid("3548ff19-9a06-4eaa-9ce8-c619599bc0cd"),
                             CurrentCapacity = 0,
                             MaxCapacity = 100,
                             Name = "Salle J"
+                        });
+                });
+
+            modelBuilder.Entity("ConfPlan.Shared.Speaker", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Speakers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8a5add5b-181e-4011-8ad6-f23680c52423"),
+                            Bio = "Le professeur Michel Dupont est un expert reconnu en Data Learning, alliant recherche académique et applications industrielles.\nIl enseigne l'intelligence artificielle et le machine learning dans plusieurs établissements de renom.\nSes travaux portent sur l’apprentissage automatique, les réseaux de neurones et les systèmes intelligents.\nIl intervient régulièrement dans des conférences pour partager ses découvertes et pratiques innovantes.\nPassionné par la transmission du savoir, il accompagne aussi des projets en transformation numérique.",
+                            Name = "Michel Dupont",
+                            PhotoUrl = "https://images.generated.photos/SRoJei2r0zIOyegFdcuLXagsSfVOY-G_WNLiKFIMy-g/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/MzMyMzU2LmpwZw.jpg"
+                        },
+                        new
+                        {
+                            Id = new Guid("f6ee5a6f-d806-480d-9b8b-d7017c892a35"),
+                            Bio = "Victoria Martin est une spécialiste de l’UI/UX avec plus de 10 ans d’expérience dans la conception centrée utilisateur.\nElle accompagne des entreprises innovantes dans la création d’interfaces intuitives et engageantes.\nSon approche allie design émotionnel, accessibilité et performance.\nElle intervient régulièrement en conférences pour partager sa vision du design éthique et durable.\nVictoria est également mentor pour de jeunes designers qu’elle forme aux meilleures pratiques du secteur.",
+                            Name = "Victoria Martin",
+                            PhotoUrl = "https://images.generated.photos/BAGgXKAepAIfdaVT-GQ2CMaXys3XZ5qdTVIqL1XFN2E/rs:fit:512:512/wm:0.95:sowe:18:18:0.33/czM6Ly9pY29uczgu/Z3Bob3Rvcy1wcm9k/LnBob3Rvcy92M18w/ODE3MTI0LmpwZw.jpg"
                         });
                 });
 
@@ -221,11 +254,29 @@ namespace ConfPlan.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f89c3a97-e6b1-4f51-a674-c3cf1862ad7c"),
+                            Id = new Guid("4cd2a163-5375-4b5b-a1b0-ca40560c37f7"),
                             Email = "admin@confplan.dev",
-                            IdRole = new Guid("bcc28637-ab86-4d36-a872-4cefebbc9691"),
+                            IdRole = new Guid("dac893ef-d2ea-4c83-84c6-05652083d295"),
                             Password = "$2a$12$ytsbB3JQWKgtrDjAFVJm3eASfxMqBqE8JlYDXBzkPbwt28oFP9unq"
                         });
+                });
+
+            modelBuilder.Entity("ConfPlan.Shared.UserConference", b =>
+                {
+                    b.Property<Guid>("IdUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("IdConference")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("IdUser", "IdConference");
+
+                    b.HasIndex("IdConference");
+
+                    b.ToTable("UserConferences");
                 });
 
             modelBuilder.Entity("ConfPlan.Shared.Conference", b =>
@@ -236,7 +287,15 @@ namespace ConfPlan.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ConfPlan.Shared.Speaker", "Speaker")
+                        .WithOne("Conference")
+                        .HasForeignKey("ConfPlan.Shared.Conference", "IdSpeaker")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Room");
+
+                    b.Navigation("Speaker");
                 });
 
             modelBuilder.Entity("ConfPlan.Shared.User", b =>
@@ -250,6 +309,30 @@ namespace ConfPlan.Api.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("ConfPlan.Shared.UserConference", b =>
+                {
+                    b.HasOne("ConfPlan.Shared.Conference", "Conference")
+                        .WithMany("UserConferences")
+                        .HasForeignKey("IdConference")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConfPlan.Shared.User", "User")
+                        .WithMany("UserConferences")
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conference");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ConfPlan.Shared.Conference", b =>
+                {
+                    b.Navigation("UserConferences");
+                });
+
             modelBuilder.Entity("ConfPlan.Shared.Role", b =>
                 {
                     b.Navigation("Users");
@@ -258,6 +341,16 @@ namespace ConfPlan.Api.Migrations
             modelBuilder.Entity("ConfPlan.Shared.Room", b =>
                 {
                     b.Navigation("Conference");
+                });
+
+            modelBuilder.Entity("ConfPlan.Shared.Speaker", b =>
+                {
+                    b.Navigation("Conference");
+                });
+
+            modelBuilder.Entity("ConfPlan.Shared.User", b =>
+                {
+                    b.Navigation("UserConferences");
                 });
 #pragma warning restore 612, 618
         }

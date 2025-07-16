@@ -23,6 +23,41 @@
 <hr/>
 
 <h4>Conférences existantes</h4>
+
+<h5>Filtres</h5>
+<div class="filters">
+    <label>Salle :</label>
+    <select @bind="selectedRoom">
+        <option value="">Toutes</option>
+        @foreach (var room in roomNames)
+        {
+            <option>@room</option>
+        }
+    </select>
+
+    <label>Jour :</label>
+    <select @bind="selectedDay">
+        <option value="">Tous</option>
+        @foreach (var day in availableDays)
+        {
+            <option>@day</option>
+        }
+    </select>
+
+    <label>Conférencier :</label>
+    <select @bind="selectedSpeaker">
+        <option value="">Tous</option>
+        @foreach (var speaker in speakerNames)
+        {
+            <option>@speaker</option>
+        }
+    </select>
+
+    <button @onclick="ResetFilters">Réinitialiser</button>
+</div>
+
+
+
 <table class="table-conferences">
     <thead>
     <tr>
@@ -39,12 +74,12 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var conf in conferences)
+    @foreach (var conf in filteredConferences)
     {
         <tr>
             <td>@conf.Day</td>
             <td>@conf.TimeSlot</td>
-            <td>@conf.Room</td>
+            <td>@conf.Room.Name</td>
             <td>@conf.Room.CurrentCapacity / @conf.Room.MaxCapacity</td>
             <td>@conf.Title</td>
             <td>@conf.Description</td>
@@ -54,7 +89,7 @@
             </td>
             <td>@conf.Speaker.Bio</td>
             <td>
-                @* <button @onclick="() => Subscription(conf)">✏️</button> *@
+                <button @onclick="() => Subscription(conf)">✏️</button>
             </td>
         </tr>
     }
@@ -62,6 +97,36 @@
 </table>
 
 <br/>
+<hr/>
+<br/>
+
+<h4>Vos Conférences</h4>
+
+<table class="table-conferences">
+    <thead>
+    <tr>
+        <th>Jour</th>
+        <th>Horaire</th>
+        <th>Salle</th>
+        <th>Titre</th>
+        <th>Se désinscrire ?</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var conf in filteredConferences)
+    {
+        <tr>
+            <td>@conf.Day</td>
+            <td>@conf.TimeSlot</td>
+            <td>@conf.Room.Name</td>
+            <td>@conf.Title</td>
+            <td>
+                @* <button @onclick="() => Unsubscription(conf)">✏️</button> *@
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
 
 <style>
     .table-conferences {

@@ -34,7 +34,7 @@ else
             <tr>
                 <td>@conf.Day</td>
                 <td>@conf.TimeSlot</td>
-                <td>@conf.Room</td>
+                <td>@conf.Room.Name</td>
                 <td>@conf.Room.CurrentCapacity / @conf.Room.MaxCapacity</td>
                 <td>@conf.Title</td>
                 <td>@conf.Description</td>
@@ -221,58 +221,58 @@ else
             <button type="submit">Ajouter Conférencier</button>
         </EditForm>
     }
-    if(isEditingSpeaker && selectSpeaker != null)
-    {
-        <EditForm Model="@selectSpeaker" OnValidSubmit="HandleUpdateSpeaker">
-            <DataAnnotationsValidator/>
-            <ValidationSummary/>
-
-            <div>
-                <label>Nom :</label>
-                <InputText @bind-Value="editingSpeaker.Name" />
-            </div>
-
-            <div>
-                <label>Bio :</label>
-                <InputTextArea @bind-Value="editingSpeaker.Bio"/>
-            </div>
-
-            <div>
-                <label>Url Photo :</label>
-                <InputTextArea @bind-Value="editingSpeaker.PhotoUrl"/>
-            </div>
-
-            <button type="submit">Modifier Conférencier</button>
-        </EditForm>
-    }
+    @* if(isEditingSpeaker && selectSpeaker != null) *@
+    @* { *@
+    @*     <EditForm Model="@selectSpeaker" OnValidSubmit="HandleUpdateSpeaker"> *@
+    @*         <DataAnnotationsValidator/> *@
+    @*         <ValidationSummary/> *@
+    @* *@
+    @*         <div> *@
+    @*             <label>Nom :</label> *@
+    @*             <InputText @bind-Value="editingSpeaker.Name" /> *@
+    @*         </div> *@
+    @* *@
+    @*         <div> *@
+    @*             <label>Bio :</label> *@
+    @*             <InputTextArea @bind-Value="editingSpeaker.Bio"/> *@
+    @*         </div> *@
+    @* *@
+    @*         <div> *@
+    @*             <label>Url Photo :</label> *@
+    @*             <InputTextArea @bind-Value="editingSpeaker.PhotoUrl"/> *@
+    @*         </div> *@
+    @* *@
+    @*         <button type="submit">Modifier Conférencier</button> *@
+    @*     </EditForm> *@
+    @* } *@
+    @* *@
+    @* <br/> *@
+    @* <hr/> *@
+    @* <br/> *@
     
-    <br/>
-    <hr/>
-    <br/>
-    
-    <h4>Gérer les conférenciers</h4>
-    
-    <EditForm Model="@selectSpeaker">
-        <DataAnnotationsValidator/>
-        <ValidationSummary/>
-        
-        <label>Nom :</label>
-        <select @bind="selectedSpeakerId">
-            <option value="">-- Choisir un conférencier --</option>
-            @if(speakers.Count == 0)
-            {
-                <option value="">Aucun conférencier disponible</option>
-            }
-            @foreach (var speak in speakers)
-            {
-                <option value="@speak.Id">@speak.Name</option>                    }
-        </select>
-
-        <button type="button" @onclick="HandleEditSpeaker" style="margin-left: 10px;">Modifier</button>
-        <button type="button" @onclick="HandleDeleteSpeaker" style="margin-left: 10px;">Supprimer</button>
-    </EditForm>
-    
-    <p>@selectSpeaker?.Name</p>
+    @* <h4>Gérer les conférenciers</h4> *@
+    @* *@
+    @* <EditForm Model="@selectSpeaker"> *@
+    @*     <DataAnnotationsValidator/> *@
+    @*     <ValidationSummary/> *@
+    @*      *@
+    @*     <label>Nom :</label> *@
+    @*     <select @bind="selectedSpeakerId"> *@
+    @*         <option value="">-- Choisir un conférencier --</option> *@
+    @*         @if(speakers.Count == 0) *@
+    @*         { *@
+    @*             <option value="">Aucun conférencier disponible</option> *@
+    @*         } *@
+    @*         @foreach (var speak in speakers) *@
+    @*         { *@
+    @*             <option value="@speak.Id">@speak.Name</option>                    } *@
+    @*     </select> *@
+    @* *@
+    @*     <button type="button" @onclick="HandleEditSpeaker" style="margin-left: 10px;">Modifier</button> *@
+    @*     <button type="button" @onclick="HandleDeleteSpeaker" style="margin-left: 10px;">Supprimer</button> *@
+    @* </EditForm> *@
+    @* *@
+    @* <p>@selectSpeaker?.Name</p> *@
 
 
     
