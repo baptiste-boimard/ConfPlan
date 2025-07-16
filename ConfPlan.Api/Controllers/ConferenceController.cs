@@ -45,7 +45,7 @@ public class ConferenceController : ControllerBase
     var existingConferenceAtSameDate= await _conferenceRepository.GetConferenceByDayAndTimeSlot(conf);
 
     if (existingConferenceAtSameDate != null)
-      return Conflict(new { message = "Ce créneau est dèjà pris" });
+      return Conflict(new { message = "Ce créneau pour cette salle est dèjà pris" });
     
     conf.Id = Guid.NewGuid();
 
